@@ -83,12 +83,12 @@ def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
         from langchain_core.prompts import PromptTemplate
         llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key, temperature=0.4)
         template = """
-You are FinWise AI.
-User Metrics: Income ₹{inc}, Expenses ₹{exp}, Savings ₹{sav}, Debt ₹{dbt}.
+You are FinWise AI, an expert Personal Finance Adviser.
+User Financials: Income ₹{inc}, Expenses ₹{exp}, Savings ₹{sav}, Debt ₹{dbt}.
 Fuzzy Health Evaluation: {score}/100 ({cat}).
 User Query: "{query}"
 
-Provide concise, professional financial advice explaining why this score was assigned and how to improve.
+Provide concise, professional financial advice explaining why this score was assigned and actionable steps to improve.
 """
         prompt = PromptTemplate(input_variables=["inc", "exp", "sav", "dbt", "score", "cat", "query"], template=template)
         chain = prompt | llm
@@ -98,7 +98,7 @@ Provide concise, professional financial advice explaining why this score was ass
         return f"Score {score}/100 ({cat}). Focus on reducing high expense categories."
 
 # --------------------------------------------------
-# ULTRA-HIGH RESOLUTION GLASSMORPHISM CSS
+# LIQUID GLASSMORPHISM STYLING
 # --------------------------------------------------
 st.markdown("""
 <style>
@@ -119,54 +119,18 @@ st.markdown("""
 
 .block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1400px; }
 
-/* Sidebar Styling */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%) !important;
-    backdrop-filter: blur(40px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-    border-right: 1px solid rgba(255,255,255,0.18) !important;
-}
-
-.sidebar-logo-container { display: flex; align-items: center; gap: 12px; padding: 10px 5px 20px 5px; }
-.sidebar-logo-icon {
-    width: 42px; height: 42px; border-radius: 12px;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; box-shadow: 0 0 20px rgba(37,99,235,0.6);
-}
-.sidebar-title { font-size: 20px; font-weight: 800; color: #ffffff; line-height: 1.1; }
-.sidebar-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
-
-.nav-item {
-    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-    border-radius: 14px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.7);
-    margin-bottom: 6px; cursor: pointer; transition: all 0.2s;
-}
-.nav-item.active {
-    background: linear-gradient(90deg, rgba(37,99,235,0.7), rgba(124,58,237,0.5));
-    color: #ffffff; border: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0 4px 25px rgba(37,99,235,0.5);
-}
-
 /* Enhanced Glass Panels */
-.glass-panel {
+.glass-panel, .top-metric-card, .feat-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    border-radius: 20px !important; padding: 20px;
     backdrop-filter: blur(40px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    border-radius: 20px !important;
+    padding: 20px;
 }
 
-/* Top Metric Cards */
-.top-metric-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    border-radius: 18px !important; padding: 18px;
-    backdrop-filter: blur(40px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-}
+/* Metric Badges */
 .metric-badge {
     width: 38px; height: 38px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center; font-size: 18px;
@@ -179,19 +143,39 @@ st.markdown("""
 
 .top-metric-label { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
 .top-metric-val { font-size: 24px; font-weight: 800; color: #ffffff; margin: 2px 0 6px 0; }
-.top-metric-trend { font-size: 11px; font-weight: 600; color: #34d399; display: flex; align-items: center; gap: 4px; }
+.top-metric-trend { font-size: 11px; font-weight: 600; color: #34d399; }
 
-/* Input Field Glass Effects */
-.stNumberInput input, .stTextInput input {
+/* Custom Inputs */
+.stNumberInput input, .stTextInput input, .stSelectbox select {
     background: rgba(255, 255, 255, 0.08) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important; color: #ffffff !important;
     font-weight: 600 !important; font-size: 15px !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
 }
 .input-subtext { font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: -10px; margin-bottom: 10px; }
 
-/* Enhanced Glowing Button */
+/* Custom Radio Sidebar Styling */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%) !important;
+    backdrop-filter: blur(40px) saturate(180%) !important;
+    border-right: 1px solid rgba(255,255,255,0.18) !important;
+}
+
+div[data-testid="stRadio"] > label { display: none; }
+div[data-testid="stRadio"] > div { gap: 10px; }
+div[data-testid="stRadio"] label {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px; padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+    width: 100%;
+}
+div[data-testid="stRadio"] label:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Glowing Button */
 .stButton > button {
     width: 100%; border-radius: 14px; padding: 14px;
     font-size: 16px; font-weight: 700; color: #ffffff;
@@ -204,53 +188,31 @@ st.markdown("""
     transform: translateY(-2px) !important;
     box-shadow: 0 0 35px rgba(124, 58, 237, 0.8), 0 12px 25px rgba(0, 0, 0, 0.5) !important;
 }
-
-/* Feature Cards */
-.feat-card {
-    border-radius: 18px !important; padding: 20px; height: 100%;
-    backdrop-filter: blur(40px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-    border: 1px solid rgba(255,255,255,0.18) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important;
-}
-.feat-green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255,255,255,0.02) 100%) !important; }
-.feat-purple { background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(255,255,255,0.02) 100%) !important; }
-.feat-yellow { background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(255,255,255,0.02) 100%) !important; }
-
-.feat-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px;
-}
-.feat-title { font-size: 15px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
-.feat-desc { font-size: 12px; color: rgba(255, 255, 255, 0.6); line-height: 1.5; }
 </style>
 """, unsafe_allow_html=True)
 
 # --------------------------------------------------
-# SIDEBAR NAVIGATION
+# FUNCTIONAL SIDEBAR NAVIGATION
 # --------------------------------------------------
 with st.sidebar:
     st.html("""
-    <div class="sidebar-logo-container">
-        <div class="sidebar-logo-icon">📊</div>
+    <div style="display:flex; align-items:center; gap:12px; padding:10px 5px 15px 5px;">
+        <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, #2563eb, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 0 20px rgba(37,99,235,0.6);">📊</div>
         <div>
-            <div class="sidebar-title">FinWise</div>
-            <div class="sidebar-sub">Plan Smarter • Live Better</div>
+            <div style="font-size:20px; font-weight:800; color:#ffffff;">FinWise</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.6);">Plan Smarter • Live Better</div>
         </div>
     </div>
     """)
     st.markdown("---")
     
-    st.html("""
-    <div class="nav-item"><span>🏠</span> Home</div>
-    <div class="nav-item active"><span>📊</span> Dashboard</div>
-    <div class="nav-item"><span>💳</span> Expenses</div>
-    <div class="nav-item"><span>✨</span> AI Adviser</div>
-    <div class="nav-item"><span>📈</span> Insights</div>
-    <div class="nav-item"><span>⚙️</span> Settings</div>
-    """)
+    nav_choice = st.radio(
+        "Navigation",
+        ["🏠 Home", "📊 Dashboard", "💳 Expenses", "✨ AI Adviser", "📈 Insights", "⚙️ Settings"],
+        index=1
+    )
     
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.html("""
     <div style="padding:12px; font-size:12px; color:rgba(255,255,255,0.6); font-style:italic; line-height:1.5;">
     "A better financial future starts with better decisions."
@@ -265,186 +227,259 @@ with st.sidebar:
     """)
 
 # --------------------------------------------------
-# TOP HEADER & HERO SECTION
+# PAGE 1: 🏠 HOME
 # --------------------------------------------------
-header_col1, header_col2 = st.columns([3, 1])
-with header_col1:
+if nav_choice == "🏠 Home":
     st.html("""
-    <div style="font-size:11px; font-weight:700; color:#60a5fa; letter-spacing:2px; text-transform:uppercase;">WELCOME TO</div>
-    <div style="font-size:38px; font-weight:800; color:#ffffff; line-height:1.15; margin:4px 0;">Personal Finance and<br>Expense Management Adviser</div>
-    <div style="font-size:14px; color:rgba(255,255,255,0.7);">Track. Analyze. Plan. Achieve. — Smarter Money Decisions with AI & Fuzzy Logic.</div>
-    """)
-
-with header_col2:
-    st.html("""
-    <div class="glass-panel" style="padding:18px; text-align:center;">
-        <div style="font-size:14px; font-weight:600; font-style:italic; color:rgba(255,255,255,0.95);">"Manage your money today for a brighter tomorrow."</div>
-        <div style="width:40px; height:3px; background:linear-gradient(90deg, #2563eb, #7c3aed); margin:12px auto 0 auto; border-radius:2px;"></div>
+    <div class="glass-panel">
+        <h1 style="color:#ffffff; margin-bottom:10px;">Welcome to FinWise Adviser</h1>
+        <p style="color:rgba(255,255,255,0.7); font-size:16px;">FinWise is an Intelligent Personal Finance and Expense Management Adviser powered by Mamdani Fuzzy Inference System and LangChain AI.</p>
     </div>
     """)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# --------------------------------------------------
-# TOP METRIC SUMMARY CARDS
-# --------------------------------------------------
-m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-
-with m_col1:
-    st.html("""
-    <div class="top-metric-card">
-        <div class="metric-badge bg-green">💼</div>
-        <div class="top-metric-label">Monthly Income</div>
-        <div class="top-metric-val">₹30,000</div>
-        <div class="top-metric-trend">⬆ +0%</div>
-    </div>
-    """)
-
-with m_col2:
-    st.html("""
-    <div class="top-metric-card">
-        <div class="metric-badge bg-pink">💳</div>
-        <div class="top-metric-label">Monthly Expenses</div>
-        <div class="top-metric-val">₹20,000</div>
-        <div class="top-metric-trend">⬆ +0%</div>
-    </div>
-    """)
-
-with m_col3:
-    st.html("""
-    <div class="top-metric-card">
-        <div class="metric-badge bg-blue">🐷</div>
-        <div class="top-metric-label">Monthly Savings</div>
-        <div class="top-metric-val">₹5,000</div>
-        <div class="top-metric-trend">⬆ +0%</div>
-    </div>
-    """)
-
-with m_col4:
-    st.html("""
-    <div class="top-metric-card">
-        <div class="metric-badge bg-purple">🏦</div>
-        <div class="top-metric-label">Monthly Debt</div>
-        <div class="top-metric-val">₹2,000</div>
-        <div class="top-metric-trend">⬆ +0%</div>
-    </div>
-    """)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# --------------------------------------------------
-# INPUT SECTION
-# --------------------------------------------------
-st.html("""
-<div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-    <span style="font-size:20px;">📊</span>
-    <div>
-        <div style="font-size:18px; font-weight:700;">Enter Your Financial Details</div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.6);">Provide your monthly financial information to get AI-powered insights.</div>
-    </div>
-</div>
-""")
-
-in_col1, in_col2, in_col3, in_col4 = st.columns(4)
-
-with in_col1:
-    income = st.number_input("Monthly Income (₹)", min_value=1.0, value=30000.0, step=1000.0)
-    st.html('<div class="input-subtext">Your total monthly income</div>')
-
-with in_col2:
-    expenses = st.number_input("Monthly Expenses (₹)", min_value=0.0, value=20000.0, step=1000.0)
-    st.html('<div class="input-subtext">All your monthly expenses</div>')
-
-with in_col3:
-    savings = st.number_input("Monthly Savings (₹)", min_value=0.0, value=5000.0, step=500.0)
-    st.html('<div class="input-subtext">Amount you save monthly</div>')
-
-with in_col4:
-    debt = st.number_input("Monthly Debt Payment (₹)", min_value=0.0, value=2000.0, step=500.0)
-    st.html('<div class="input-subtext">EMI or loan payments</div>')
-
-query_input = st.text_input("💬 Natural Language Financial Query (Optional):", placeholder="e.g. How can I improve my savings with ₹2,000 debt?")
-
-st.markdown("<br>", unsafe_allow_html=True)
-analyze_btn = st.button("✨ Analyze My Finances")
-
-# --------------------------------------------------
-# ANALYSIS RESULTS (FUZZY LOGIC + LANGCHAIN AI)
-# --------------------------------------------------
-if analyze_btn:
-    exp_ratio = min((expenses / income) * 100, 100.0)
-    sav_ratio = min((savings / income) * 100, 100.0)
-    dbt_ratio = min((debt / income) * 100, 100.0)
-    
-    score, category, rules, mems = evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio)
-    
     st.markdown("<br>", unsafe_allow_html=True)
-    res_c1, res_c2 = st.columns([1, 2])
-    
-    with res_c1:
-        st.html(f"""
-        <div class="glass-panel" style="text-align:center;">
-            <div style="font-size:13px; color:rgba(255,255,255,0.7);">Fuzzy Financial Health Score</div>
-            <div style="font-size:52px; font-weight:800; color:#60a5fa; margin:10px 0;">{score}</div>
-            <div style="font-size:16px; font-weight:700;">Status: <span style="color:#c084fc;">{category}</span></div>
-        </div>
-        """)
-        
-    with res_c2:
-        st.html(f"""
+    col1, col2 = st.columns(2)
+    with col1:
+        st.html("""
         <div class="glass-panel">
-            <div style="font-size:15px; font-weight:700; margin-bottom:8px;">🧠 Fuzzy Set Evaluation</div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.8); line-height:1.8;">
-                • <b>Expense Set Degrees:</b> Low ({mems['exp']['Low']:.2f}), Medium ({mems['exp']['Med']:.2f}), High ({mems['exp']['High']:.2f})<br>
-                • <b>Savings Set Degrees:</b> Poor ({mems['sav']['Poor']:.2f}), Moderate ({mems['sav']['Mod']:.2f}), Good ({mems['sav']['Good']:.2f})<br>
-                • <b>Debt Set Degrees:</b> Low ({mems['dbt']['Low']:.2f}), Medium ({mems['dbt']['Med']:.2f}), High ({mems['dbt']['High']:.2f})
-            </div>
+            <h3>🧠 Fuzzy Logic Engine</h3>
+            <p style="color:rgba(255,255,255,0.7); font-size:14px;">Evaluates non-linear financial parameters (Income, Expenses, Savings, Debt) using triangular/trapezoidal membership functions and centroid defuzzification to calculate a 0-100 Financial Health Score.</p>
+        </div>
+        """)
+    with col2:
+        st.html("""
+        <div class="glass-panel">
+            <h3>🤖 LangChain AI Contextual Reasoning</h3>
+            <p style="color:rgba(255,255,255,0.7); font-size:14px;">Processes natural language queries and synthesizes actual mathematical fuzzy logic metrics into personalized financial advice using Gemini LLM models.</p>
+        </div>
+        """)
+
+# --------------------------------------------------
+# PAGE 2: 📊 DASHBOARD (MAIN FUNCTIONAL PAGE)
+# --------------------------------------------------
+elif nav_choice == "📊 Dashboard":
+    header_col1, header_col2 = st.columns([3, 1])
+    with header_col1:
+        st.html("""
+        <div style="font-size:11px; font-weight:700; color:#60a5fa; letter-spacing:2px; text-transform:uppercase;">WELCOME TO</div>
+        <div style="font-size:38px; font-weight:800; color:#ffffff; line-height:1.15; margin:4px 0;">Personal Finance and<br>Expense Management Adviser</div>
+        <div style="font-size:14px; color:rgba(255,255,255,0.7);">Track. Analyze. Plan. Achieve. — Smarter Money Decisions with AI & Fuzzy Logic.</div>
+        """)
+
+    with header_col2:
+        st.html("""
+        <div class="glass-panel" style="padding:18px; text-align:center;">
+            <div style="font-size:14px; font-weight:600; font-style:italic; color:rgba(255,255,255,0.95);">"Manage your money today for a brighter tomorrow."</div>
+            <div style="width:40px; height:3px; background:linear-gradient(90deg, #2563eb, #7c3aed); margin:12px auto 0 auto; border-radius:2px;"></div>
         </div>
         """)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    with st.spinner("Generating LangChain Advisory Report..."):
-        ai_response = get_ai_advice(query_input, income, expenses, savings, debt, score, category)
-        st.html(f"""
-        <div class="glass-panel" style="border-left: 4px solid #a855f7;">
-            <div style="font-size:15px; font-weight:700; margin-bottom:8px;">🤖 AI Personal Advisory Report</div>
-            <div style="font-size:13px; color:rgba(255,255,255,0.9); line-height:1.6;">{ai_response}</div>
+
+    # TOP METRICS SUMMARY
+    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+    with m_col1:
+        st.html("""
+        <div class="top-metric-card">
+            <div class="metric-badge bg-green">💼</div>
+            <div class="top-metric-label">Monthly Income</div>
+            <div class="top-metric-val">₹30,000</div>
+            <div class="top-metric-trend">⬆ +0%</div>
+        </div>
+        """)
+    with m_col2:
+        st.html("""
+        <div class="top-metric-card">
+            <div class="metric-badge bg-pink">💳</div>
+            <div class="top-metric-label">Monthly Expenses</div>
+            <div class="top-metric-val">₹20,000</div>
+            <div class="top-metric-trend">⬆ +0%</div>
+        </div>
+        """)
+    with m_col3:
+        st.html("""
+        <div class="top-metric-card">
+            <div class="metric-badge bg-blue">🐷</div>
+            <div class="top-metric-label">Monthly Savings</div>
+            <div class="top-metric-val">₹5,000</div>
+            <div class="top-metric-trend">⬆ +0%</div>
+        </div>
+        """)
+    with m_col4:
+        st.html("""
+        <div class="top-metric-card">
+            <div class="metric-badge bg-purple">🏦</div>
+            <div class="top-metric-label">Monthly Debt</div>
+            <div class="top-metric-val">₹2,000</div>
+            <div class="top-metric-trend">⬆ +0%</div>
         </div>
         """)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # INPUT SECTION
+    st.html("""
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="font-size:20px;">📊</span>
+        <div>
+            <div style="font-size:18px; font-weight:700;">Enter Your Financial Details</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.6);">Provide your monthly financial information to get AI-powered insights.</div>
+        </div>
+    </div>
+    """)
+
+    in_col1, in_col2, in_col3, in_col4 = st.columns(4)
+    with in_col1:
+        income = st.number_input("Monthly Income (₹)", min_value=1.0, value=30000.0, step=1000.0)
+        st.html('<div class="input-subtext">Your total monthly income</div>')
+    with in_col2:
+        expenses = st.number_input("Monthly Expenses (₹)", min_value=0.0, value=20000.0, step=1000.0)
+        st.html('<div class="input-subtext">All your monthly expenses</div>')
+    with in_col3:
+        savings = st.number_input("Monthly Savings (₹)", min_value=0.0, value=5000.0, step=500.0)
+        st.html('<div class="input-subtext">Amount you save monthly</div>')
+    with in_col4:
+        debt = st.number_input("Monthly Debt Payment (₹)", min_value=0.0, value=2000.0, step=500.0)
+        st.html('<div class="input-subtext">EMI or loan payments</div>')
+
+    query_input = st.text_input("💬 Natural Language Financial Query (Optional):", placeholder="e.g. How can I improve my savings with ₹2,000 debt?")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    analyze_btn = st.button("✨ Analyze My Finances")
+
+    if analyze_btn:
+        exp_ratio = min((expenses / income) * 100, 100.0)
+        sav_ratio = min((savings / income) * 100, 100.0)
+        dbt_ratio = min((debt / income) * 100, 100.0)
+        score, category, rules, mems = evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        res_c1, res_c2 = st.columns([1, 2])
+        with res_c1:
+            st.html(f"""
+            <div class="glass-panel" style="text-align:center;">
+                <div style="font-size:13px; color:rgba(255,255,255,0.7);">Fuzzy Financial Health Score</div>
+                <div style="font-size:52px; font-weight:800; color:#60a5fa; margin:10px 0;">{score}</div>
+                <div style="font-size:16px; font-weight:700;">Status: <span style="color:#c084fc;">{category}</span></div>
+            </div>
+            """)
+        with res_c2:
+            st.html(f"""
+            <div class="glass-panel">
+                <div style="font-size:15px; font-weight:700; margin-bottom:8px;">🧠 Fuzzy Set Evaluation</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.8); line-height:1.8;">
+                    • <b>Expense Set Degrees:</b> Low ({mems['exp']['Low']:.2f}), Medium ({mems['exp']['Med']:.2f}), High ({mems['exp']['High']:.2f})<br>
+                    • <b>Savings Set Degrees:</b> Poor ({mems['sav']['Poor']:.2f}), Moderate ({mems['sav']['Mod']:.2f}), Good ({mems['sav']['Good']:.2f})<br>
+                    • <b>Debt Set Degrees:</b> Low ({mems['dbt']['Low']:.2f}), Medium ({mems['dbt']['Med']:.2f}), High ({mems['dbt']['High']:.2f})
+                </div>
+            </div>
+            """)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.spinner("Generating LangChain Advisory Report..."):
+            ai_response = get_ai_advice(query_input, income, expenses, savings, debt, score, category)
+            st.html(f"""
+            <div class="glass-panel" style="border-left: 4px solid #a855f7;">
+                <div style="font-size:15px; font-weight:700; margin-bottom:8px;">🤖 AI Personal Advisory Report</div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.9); line-height:1.6;">{ai_response}</div>
+            </div>
+            """)
 
 # --------------------------------------------------
-# BOTTOM FEATURE CARDS
+# PAGE 3: 💳 EXPENSES (INTERACTIVE TRACKER)
 # --------------------------------------------------
-f_col1, f_col2, f_col3 = st.columns(3)
-
-with f_col1:
+elif nav_choice == "💳 Expenses":
     st.html("""
-    <div class="feat-card feat-green">
-        <div class="feat-icon bg-green">🤖</div>
-        <div class="feat-title">AI-Powered Advice</div>
-        <div class="feat-desc">Get personalized financial recommendations using LangChain and LLM.</div>
+    <div class="glass-panel">
+        <h2>💳 Expense Categorization & Breakdown</h2>
+        <p style="color:rgba(255,255,255,0.7);">Break down your expenses into essential vs discretionary categories.</p>
+    </div>
+    """)
+    st.markdown("<br>", unsafe_allow_html=True)
+    ec1, ec2 = st.columns(2)
+    with ec1:
+        rent = st.number_input("🏠 Rent / Housing (₹)", value=10000.0)
+        food = st.number_input("🍔 Food & Groceries (₹)", value=6000.0)
+    with ec2:
+        utilities = st.number_input("⚡ Utilities & Bills (₹)", value=2000.0)
+        leisure = st.number_input("🎬 Shopping & Entertainment (₹)", value=2000.0)
+    
+    total_e = rent + food + utilities + leisure
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.html(f"""
+    <div class="glass-panel" style="border-left:4px solid #34d399;">
+        <h3>Total Categorized Expenses: ₹{total_e:,.0f}</h3>
     </div>
     """)
 
-with f_col2:
+# --------------------------------------------------
+# PAGE 4: ✨ AI ADVISER (FULL CHAT INTERFACE)
+# --------------------------------------------------
+elif nav_choice == "✨ AI Adviser":
     st.html("""
-    <div class="feat-card feat-purple">
-        <div class="feat-icon bg-purple">🧠</div>
-        <div class="feat-title">Fuzzy Logic Analysis</div>
-        <div class="feat-desc">Advanced fuzzy inference system to analyze your financial health.</div>
+    <div class="glass-panel">
+        <h2>✨ FinWise AI Financial Assistant</h2>
+        <p style="color:rgba(255,255,255,0.7);">Ask any natural language financial question. Powered by LangChain and Gemini.</p>
     </div>
     """)
+    st.markdown("<br>", unsafe_allow_html=True)
+    ai_q = st.text_area("Ask AI Adviser a Question:", value="How can I save ₹10,000 per month on a ₹50,000 salary?")
+    if st.button("🤖 Get Financial Advice"):
+        with st.spinner("FinWise AI thinking..."):
+            res = get_ai_advice(ai_q, 50000, 25000, 15000, 5000, 78.5, "Good")
+            st.html(f"""
+            <div class="glass-panel" style="border-left:4px solid #38bdf8;">
+                <div style="font-size:14px; line-height:1.6; color:#ffffff;">{res}</div>
+            </div>
+            """)
 
-with f_col3:
+# --------------------------------------------------
+# PAGE 5: 📈 INSIGHTS (ANALYTICS)
+# --------------------------------------------------
+elif nav_choice == "📈 Insights":
     st.html("""
-    <div class="feat-card feat-yellow">
-        <div class="feat-icon bg-purple" style="background:rgba(245, 158, 11, 0.25); color:#fbbf24; border:1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);">🎯</div>
-        <div class="feat-title">Better Financial Future</div>
-        <div class="feat-desc">Make informed decisions and achieve your financial goals.</div>
+    <div class="glass-panel">
+        <h2>📈 Financial Ratio Analytics</h2>
+        <p style="color:rgba(255,255,255,0.7);">Key Performance Ratios recommended by financial planners.</p>
     </div>
     """)
+    st.markdown("<br>", unsafe_allow_html=True)
+    ic1, ic2, ic3 = st.columns(3)
+    with ic1:
+        st.html("""
+        <div class="glass-panel" style="text-align:center;">
+            <h4>50-30-20 Rule</h4>
+            <p style="font-size:12px; color:rgba(255,255,255,0.7);">50% Needs, 30% Wants, 20% Savings</p>
+        </div>
+        """)
+    with ic2:
+        st.html("""
+        <div class="glass-panel" style="text-align:center;">
+            <h4>Debt-To-Income</h4>
+            <p style="font-size:12px; color:rgba(255,255,255,0.7);">Should ideally stay under 36% of gross income.</p>
+        </div>
+        """)
+    with ic3:
+        st.html("""
+        <div class="glass-panel" style="text-align:center;">
+            <h4>Emergency Fund</h4>
+            <p style="font-size:12px; color:rgba(255,255,255,0.7);">Maintain at least 3-6 months of expenses.</p>
+        </div>
+        """)
+
+# --------------------------------------------------
+# PAGE 6: ⚙️ SETTINGS
+# --------------------------------------------------
+elif nav_choice == "⚙️ Settings":
+    st.html("""
+    <div class="glass-panel">
+        <h2>⚙️ App Settings & Configuration</h2>
+    </div>
+    """)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.text_input("User Name:", value="Vikas Pal")
+    st.selectbox("Default Currency:", ["INR (₹)", "USD ($)", "EUR (€)"])
+    api_status = "Configured ✅" if os.getenv("GOOGLE_API_KEY") else "Missing ⚠️"
+    st.info(f"Google Gemini API Status: {api_status}")
 
 # --------------------------------------------------
 # FOOTER
