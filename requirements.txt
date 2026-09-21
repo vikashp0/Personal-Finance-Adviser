@@ -1,0 +1,5 @@
+streamlit
+numpy
+pandas
+langchain
+langchain-google-genai
