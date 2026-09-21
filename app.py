@@ -32,105 +32,16 @@ if "app_initialized" not in st.session_state:
 
 if "transactions" not in st.session_state:
     st.session_state.transactions = pd.DataFrame([
-        {
-            "ID": "TXN-8001",
-            "Date": "2026-09-01",
-            "Category": "Base Salary",
-            "Type": "Income",
-            "Amount": 70000.0,
-            "Method": "Direct Deposit / Bank",
-            "Status": "Cleared",
-            "Note": "Monthly Corporate Payroll Credit"
-        },
-        {
-            "ID": "TXN-8002",
-            "Date": "2026-09-02",
-            "Category": "Housing & Rent",
-            "Type": "Expense",
-            "Amount": 18000.0,
-            "Method": "UPI Direct",
-            "Status": "Cleared",
-            "Note": "Apartment Maintenance & Monthly Rent"
-        },
-        {
-            "ID": "TXN-8003",
-            "Date": "2026-09-03",
-            "Category": "Groceries & Supplies",
-            "Type": "Expense",
-            "Amount": 8500.0,
-            "Method": "Credit Card",
-            "Status": "Cleared",
-            "Note": "Supermarket Restock & Household Items"
-        },
-        {
-            "ID": "TXN-8004",
-            "Date": "2026-09-05",
-            "Category": "Index Mutual Funds",
-            "Type": "Investment",
-            "Amount": 18000.0,
-            "Method": "Auto-Debit SIP",
-            "Status": "Cleared",
-            "Note": "Nifty 50 Index Fund Systematic Plan"
-        },
-        {
-            "ID": "TXN-8005",
-            "Date": "2026-09-07",
-            "Category": "Utilities & Internet",
-            "Type": "Expense", "Amount": 3800.0,
-            "Method": "UPI Direct",
-            "Status": "Cleared",
-            "Note": "Electricity, Water, & Fiber Broadband"
-        },
-        {
-            "ID": "TXN-8006",
-            "Date": "2026-09-10",
-            "Category": "Vehicle Loan EMI",
-            "Type": "Debt",
-            "Amount": 6500.0,
-            "Method": "Auto-Debit",
-            "Status": "Cleared",
-            "Note": "Bank Car Loan Fixed Installment"
-        },
-        {
-            "ID": "TXN-8007",
-            "Date": "2026-09-12",
-            "Category": "Dining & Leisure",
-            "Type": "Expense",
-            "Amount": 4500.0,
-            "Method": "Credit Card",
-            "Status": "Cleared",
-            "Note": "Weekend Dinners & Entertainment"
-        },
-        {
-            "ID": "TXN-8008",
-            "Date": "2026-09-15",
-            "Category": "Freelance Design",
-            "Type": "Income",
-            "Amount": 15000.0,
-            "Method": "Wire Transfer",
-            "Status": "Cleared",
-            "Note": "UI/UX Design Client Project Fee"
-        },
-        {
-            "ID": "TXN-8009",
-            "Date": "2026-09-18",
-            "Category": "Tech Subscriptions",
-            "Type": "Expense",
-            "Amount": 2200.0,
-            "Method": "Credit Card",
-            "Status": "Cleared",
-            "Note": "Cloud Services & Software Licenses"
-        },
-        {
-            "ID": "TXN-8010",
-            "Date": "2026-09-20",
-            "Category": "Emergency Fund Deposit",
-            "Type": "Investment",
-            "Amount": 5000.0,
-            "Method": "Bank Transfer",
-            "Status": "Cleared",
-            "Note": "High-Yield Savings Deposit"
-        }
+        {"ID": "TXN-8001", "Date": "2026-09-01", "Category": "Base Salary", "Type": "Income", "Amount": 70000.0, "Method": "Direct Deposit / Bank", "Status": "Cleared", "Note": "Monthly Corporate Payroll Credit"},
+        {"ID": "TXN-8002", "Date": "2026-09-02", "Category": "Housing & Rent", "Type": "Expense", "Amount": 18000.0, "Method": "UPI Direct", "Status": "Cleared", "Note": "Apartment Maintenance & Monthly Rent"},
+        {"ID": "TXN-8003", "Date": "2026-09-03", "Category": "Groceries & Supplies", "Type": "Expense", "Amount": 8500.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Supermarket Restock & Household Items"},
+        {"ID": "TXN-8004", "Date": "2026-09-05", "Category": "Index Mutual Funds", "Type": "Investment", "Amount": 18000.0, "Method": "Auto-Debit SIP", "Status": "Cleared", "Note": "Nifty 50 Index Fund Systematic Plan"},
+        {"ID": "TXN-8005", "Date": "2026-09-07", "Category": "Utilities & Internet", "Type": "Expense", "Amount": 3800.0, "Method": "UPI Direct", "Status": "Cleared", "Note": "Electricity, Water, & Fiber Broadband"},
+        {"ID": "TXN-8006", "Date": "2026-09-10", "Category": "Vehicle Loan EMI", "Type": "Debt", "Amount": 6500.0, "Method": "Auto-Debit", "Status": "Cleared", "Note": "Bank Car Loan Fixed Installment"},
+        {"ID": "TXN-8007", "Date": "2026-09-12", "Category": "Dining & Leisure", "Type": "Expense", "Amount": 4500.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Weekend Dinners & Entertainment"},
+        {"ID": "TXN-8008", "Date": "2026-09-15", "Category": "Freelance Design", "Type": "Income", "Amount": 15000.0, "Method": "Wire Transfer", "Status": "Cleared", "Note": "UI/UX Design Client Project Fee"},
+        {"ID": "TXN-8009", "Date": "2026-09-18", "Category": "Tech Subscriptions", "Type": "Expense", "Amount": 2200.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Cloud Services & Software Licenses"},
+        {"ID": "TXN-8010", "Date": "2026-09-20", "Category": "Emergency Fund Deposit", "Type": "Investment", "Amount": 5000.0, "Method": "Bank Transfer", "Status": "Cleared", "Note": "High-Yield Savings Deposit"}
     ])
 
 if "chat_history" not in st.session_state:
@@ -138,56 +49,25 @@ if "chat_history" not in st.session_state:
 
 if "financial_goals" not in st.session_state:
     st.session_state.financial_goals = pd.DataFrame([
-        {
-            "Goal ID": "G-101",
-            "Goal Name": "Emergency Liquid Cushion",
-            "Category": "Risk Reserve",
-            "Target Amount (₹)": 250000.0,
-            "Current Saved (₹)": 160000.0,
-            "Target Date": "2027-03-31",
-            "Priority": "High"
-        },
-        {
-            "Goal ID": "G-102",
-            "Goal Name": "International Tech Summit",
-            "Category": "Travel & Learning",
-            "Target Amount (₹)": 180000.0,
-            "Current Saved (₹)": 75000.0,
-            "Target Date": "2027-08-15",
-            "Priority": "Medium"
-        },
-        {
-            "Goal ID": "G-103",
-            "Goal Name": "Long-Term Retirement SIP",
-            "Category": "Wealth Corpus",
-            "Target Amount (₹)": 5000000.0,
-            "Current Saved (₹)": 650000.0,
-            "Target Date": "2032-12-31",
-            "Priority": "Critical"
-        }
+        {"Goal ID": "G-101", "Goal Name": "Emergency Liquid Cushion", "Category": "Risk Reserve", "Target Amount (₹)": 250000.0, "Current Saved (₹)": 160000.0, "Target Date": "2027-03-31", "Priority": "High"},
+        {"Goal ID": "G-102", "Goal Name": "International Tech Summit", "Category": "Travel & Learning", "Target Amount (₹)": 180000.0, "Current Saved (₹)": 75000.0, "Target Date": "2027-08-15", "Priority": "Medium"},
+        {"Goal ID": "G-103", "Goal Name": "Long-Term Retirement SIP", "Category": "Wealth Corpus", "Target Amount (₹)": 5000000.0, "Current Saved (₹)": 650000.0, "Target Date": "2032-12-31", "Priority": "Critical"}
     ])
 
 # ==============================================================================
 # SECTION 3: MAMDANI FUZZY LOGIC MATHEMATICAL ENGINE
 # ==============================================================================
 def trimf(x, a, b, c):
-    if x <= a or x >= c:
-        return 0.0
-    if a < x <= b:
-        return (x - a) / (b - a) if b != a else 1.0
-    if b < x < c:
-        return (c - x) / (c - b) if c != b else 1.0
+    if x <= a or x >= c: return 0.0
+    if a < x <= b: return (x - a) / (b - a) if b != a else 1.0
+    if b < x < c: return (c - x) / (c - b) if c != b else 1.0
     return 0.0
 
 def trapmf(x, a, b, c, d):
-    if x <= a or x >= d:
-        return 0.0
-    if a <= x <= b:
-        return (x - a) / (b - a) if b != a else 1.0
-    if b <= x <= c:
-        return 1.0
-    if c <= x <= d:
-        return (d - x) / (d - c) if d != c else 1.0
+    if x <= a or x >= d: return 0.0
+    if a <= x <= b: return (x - a) / (b - a) if b != a else 1.0
+    if b <= x <= c: return 1.0
+    if c <= x <= d: return (d - x) / (d - c) if d != c else 1.0
     return 0.0
 
 def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
@@ -203,12 +83,7 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
     dbt_med = trimf(dbt_ratio, 20.0, 35.0, 50.0)
     dbt_high = trapmf(dbt_ratio, 40.0, 60.0, 100.0, 100.0)
 
-    rules = {
-        "Poor": 0.0,
-        "Fair": 0.0,
-        "Good": 0.0,
-        "Excellent": 0.0
-    }
+    rules = {"Poor": 0.0, "Fair": 0.0, "Good": 0.0, "Excellent": 0.0}
 
     r1 = min(exp_low, sav_good, dbt_low)
     rules["Excellent"] = max(rules["Excellent"], r1)
@@ -244,14 +119,10 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
     sum_agg = np.sum(aggregated)
     score = float(np.sum(x_grid * aggregated) / sum_agg) if sum_agg != 0.0 else 50.0
 
-    if score >= 80.0:
-        category = "Excellent"
-    elif score >= 60.0:
-        category = "Good"
-    elif score >= 40.0:
-        category = "Fair"
-    else:
-        category = "Poor"
+    if score >= 80.0: category = "Excellent"
+    elif score >= 60.0: category = "Good"
+    elif score >= 40.0: category = "Fair"
+    else: category = "Poor"
 
     membership_details = {
         "exp": {"Low": exp_low, "Med": exp_med, "High": exp_high},
@@ -308,12 +179,8 @@ Provide a structured, executive financial advisory report.
 
         chain = prompt | llm
         res = chain.invoke({
-            "inc": inc,
-            "exp": exp,
-            "sav": sav,
-            "dbt": dbt,
-            "score": score,
-            "cat": cat,
+            "inc": inc, "exp": exp, "sav": sav, "dbt": dbt,
+            "score": score, "cat": cat,
             "query": query if query else "Provide a comprehensive financial health and wealth optimization report"
         })
         return res.content
@@ -321,7 +188,7 @@ Provide a structured, executive financial advisory report.
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments."
 
 # ==============================================================================
-# SECTION 5: FUTURISTIC IOS LIQUID GLASS CSS ENGINE
+# SECTION 5: FUTURISTIC IOS LIQUID GLASS OVERRIDE CSS ENGINE
 # ==============================================================================
 st.markdown("""
 <style>
@@ -331,6 +198,7 @@ st.markdown("""
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+/* Base Wallpaper Background */
 .stApp {
     background: 
         radial-gradient(circle at 10% 15%, rgba(37, 99, 235, 0.45), transparent 45%),
@@ -343,7 +211,45 @@ st.markdown("""
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1440px; }
 
-/* iOS Liquid Glass Card Styling */
+/* OVERRIDE STREAMLIT DEFAULT BLACK BACKGROUNDS ON INPUTS & TABLES */
+.stNumberInput div[data-baseweb="input"], 
+.stTextInput div[data-baseweb="input"], 
+.stSelectbox div[data-baseweb="select"], 
+.stTextArea div[data-baseweb="textarea"] {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(20px) !important;
+    color: #ffffff !important;
+}
+
+.stNumberInput input, .stTextInput input, .stTextArea textarea {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+/* DATAFRAME GLASSMORPHISM OVERRIDE */
+div[data-testid="stDataFrame"] {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(25px) !important;
+    padding: 8px !important;
+}
+
+div[data-testid="stDataFrame"] * {
+    background: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* NATIVE CHART CONTAINER OVERRIDE */
+[data-testid="stVegaLiteChart"], [data-testid="stLineChart"] {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* iOS Glass Card Panel */
 .glass-panel, .top-metric-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
@@ -368,7 +274,7 @@ st.markdown("""
 .top-metric-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
 .top-metric-val { font-size: 28px; font-weight: 800; color: #ffffff; margin: 4px 0 2px 0; }
 
-/* FIX SIDEBAR NAVIGATION RADIO BUTTON CIRCLES */
+/* SIDEBAR NAVIGATION CLEAN RADIO BUTTONS */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%) !important;
     backdrop-filter: blur(40px) saturate(200%) !important;
@@ -388,11 +294,6 @@ div[data-testid="stRadio"] div[role="radiogroup"] label {
     width: 100% !important;
 }
 
-div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
 div[data-testid="stRadio"] div[role="radiogroup"] label input[type="radio"],
 div[data-testid="stRadio"] div[role="radiogroup"] label div[data-aria-hidden="true"],
 div[data-testid="stRadio"] div[role="radiogroup"] label svg {
@@ -410,70 +311,17 @@ div[data-testid="stRadio"] div[role="radiogroup"] label svg {
     margin-top: 15px;
 }
 
-.chart-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-}
+.chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
+.chart-title { font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 10px; }
+.chart-row { margin-bottom: 20px; }
+.chart-label-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
+.chart-track { width: 100%; height: 18px; background: rgba(255, 255, 255, 0.06); border-radius: 30px; overflow: hidden; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.chart-fill { height: 100%; border-radius: 30px; transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-.chart-title {
-    font-size: 18px;
-    font-weight: 800;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.chart-row {
-    margin-bottom: 20px;
-}
-
-.chart-label-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.chart-track {
-    width: 100%;
-    height: 18px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 30px;
-    overflow: hidden;
-    padding: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.chart-fill {
-    height: 100%;
-    border-radius: 30px;
-    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.fill-income {
-    background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-}
-
-.fill-expense {
-    background: linear-gradient(90deg, #f43f5e 0%, #fb7185 100%);
-    box-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
-}
-
-.fill-investment {
-    background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-}
-
-.fill-debt {
-    background: linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-}
+.fill-income { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+.fill-expense { background: linear-gradient(90deg, #f43f5e 0%, #fb7185 100%); box-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
+.fill-investment { background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+.fill-debt { background: linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%); box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
 
 .stButton > button {
     width: 100%; border-radius: 16px; padding: 16px; font-size: 16px; font-weight: 700; color: #ffffff;
@@ -526,7 +374,7 @@ with st.sidebar:
     </div>
     """)
 
-# COMPUTATION
+# COMPUTATION OF AGGREGATES
 df_trans = st.session_state.transactions
 inc_tot = df_trans[df_trans["Type"] == "Income"]["Amount"].sum()
 exp_tot = df_trans[df_trans["Type"] == "Expense"]["Amount"].sum()
@@ -668,7 +516,7 @@ elif nav_choice == "🧠 Mamdani Fuzzy Analytics":
     with fc3: st.html(f'<div class="glass-panel"><h4>Debt Ratio ({dbt_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["dbt"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["dbt"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["dbt"]["High"]:.2f}</b></p></div>')
 
 # ==============================================================================
-# TAB 4: 🔮 WEALTH PREDICTIONS & SIP MODULE
+# TAB 4: 🔮 WEALTH PREDICTIONS & SIP MODULE (INTERACTIVE GLASS GRAPH)
 # ==============================================================================
 elif nav_choice == "🔮 Wealth Predictions & SIP":
     st.html('<div class="glass-panel"><h2>🔮 Wealth Growth & Compound Investment Simulator</h2></div>')
@@ -686,9 +534,50 @@ elif nav_choice == "🔮 Wealth Predictions & SIP":
         curr = (curr + sip_amt) * (1.0 + r_monthly)
         timeline.append(curr)
 
-    line_df = pd.DataFrame({"Month": range(1, m_count + 1), "Corpus Growth (₹)": timeline}).set_index("Month")
-    st.line_chart(line_df)
-    st.success(f"🎯 **Projected Portfolio Value after {years} Years:** ₹{timeline[-1]:,.2f}")
+    # FUTURISTIC INTERACTIVE LIQUID GLASS SVG LINE GRAPH
+    max_corpus = timeline[-1]
+    svg_points = []
+    width, height = 900, 260
+    for idx, val in enumerate(timeline):
+        x = (idx / (m_count - 1)) * width if m_count > 1 else 0
+        y = height - ((val / max_corpus) * (height - 30)) - 15
+        svg_points.append(f"{x:.1f},{y:.1f}")
+
+    points_str = " ".join(svg_points)
+
+    st.html(f"""
+    <div class="ios-chart-card" style="margin-top:10px;">
+        <div class="chart-header">
+            <div class="chart-title">📈 Projected Portfolio Curve</div>
+            <div style="font-size:13px; color:#60a5fa; font-weight:700;">Target: ₹{max_corpus:,.2f}</div>
+        </div>
+        <div style="width:100%; overflow-x:auto;">
+            <svg viewBox="0 0 900 260" style="width:100%; height:260px;">
+                <defs>
+                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#3b82f6" />
+                        <stop offset="50%" stop-color="#a855f7" />
+                        <stop offset="100%" stop-color="#34d399" />
+                    </linearGradient>
+                    <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(168, 85, 247, 0.4)" />
+                        <stop offset="100%" stop-color="rgba(168, 85, 247, 0.0)" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="0,260 {points_str} 900,260" fill="url(#areaGrad)" />
+                <polyline points="{points_str}" fill="none" stroke="url(#lineGrad)" stroke-width="4" filter="url(#glow)" />
+            </svg>
+        </div>
+    </div>
+    """)
+    st.success(f"🎯 **Projected Portfolio Value after {years} Years:** ₹{max_corpus:,.2f}")
 
 # ==============================================================================
 # TAB 5: ✨ AI COPILOT ADVISOR MODULE
@@ -704,7 +593,7 @@ elif nav_choice == "✨ AI Copilot Advisor":
             st.session_state.chat_history.append({"q": user_q, "a": ans})
 
     for chat in reversed(st.session_state.chat_history):
-        st.html(f'<div class="glass-panel" style="margin-bottom:14px;"><b>Q: {chat["q"]}</b><hr><div>{chat["a"]}</div></div>')
+        st.html(f'<div class="glass-panel" style="margin-bottom:14px;"><b>Q: {chat["q"]}</b><hr style="border-color:rgba(255,255,255,0.1);"><div>{chat["a"]}</div></div>')
 
 # ==============================================================================
 # TAB 6: 📜 TRANSACTION AUDIT LOG MODULE
