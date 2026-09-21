@@ -206,7 +206,7 @@ def trapmf(x, a, b, c, d):
     return 0.0
 
 def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
-    """Computes Mamdani Fuzzy Inference Engine Score and Category."""
+    """Computes Mamdani Fuzzy Inference Engine Score and Category with Rule Base."""
     exp_low = trapmf(exp_ratio, 0.0, 0.0, 30.0, 50.0)
     exp_med = trimf(exp_ratio, 40.0, 55.0, 70.0)
     exp_high = trapmf(exp_ratio, 60.0, 80.0, 100.0, 100.0)
@@ -493,7 +493,7 @@ div[data-testid="stRadio"] div[role="radiogroup"] label {
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# SECTION 6: DUAL MOBILE-DESKTOP NAVIGATION CONTROLLER
+# SECTION 6: NAVIGATION HUB & CONTROLLER
 # ==============================================================================
 nav_options = [
     "📊 Executive Dashboard",
@@ -505,9 +505,13 @@ nav_options = [
     "⚙️ Settings & Profile"
 ]
 
-# Mobile Top Quick Select Box
-st.markdown("<div style='font-size:11px; font-weight:700; color:#60a5fa; margin-bottom:4px; text-transform:uppercase;'>📱 Quick Navigation Menu</div>", unsafe_allow_html=True)
-nav_choice = st.selectbox("Select View Option", nav_options, index=0, label_visibility="collapsed")
+if "active_nav" not in st.session_state:
+    st.session_state.active_nav = nav_options[0]
+
+st.markdown("<div style='font-size:10px; font-weight:800; color:#60a5fa; letter-spacing:1px; margin-bottom:6px; text-transform:uppercase;'>✨ Enterprise Navigation Hub</div>", unsafe_allow_html=True)
+selected_tab = st.selectbox("Navigation Hub", nav_options, index=nav_options.index(st.session_state.active_nav), label_visibility="collapsed")
+st.session_state.active_nav = selected_tab
+nav_choice = selected_tab
 
 with st.sidebar:
     st.html(f"""
@@ -520,11 +524,7 @@ with st.sidebar:
     </div>
     """)
     st.markdown("---")
-
-    sb_nav = st.radio("Navigation", nav_options, index=nav_options.index(nav_choice))
-    if sb_nav != nav_choice:
-        nav_choice = sb_nav
-
+    st.markdown(f"<div style='font-size:12px; color:rgba(255,255,255,0.7); padding:4px;'>Active Module:<br><b>{nav_choice}</b></div>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     st.html(f"""
     <div style="padding:14px; border-radius:18px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); backdrop-filter:blur(30px);">
@@ -783,6 +783,6 @@ elif nav_choice == "⚙️ Settings & Profile":
     st.info(f"LangChain Gemini LLM Status: {'Connected ✅' if os.getenv('GOOGLE_API_KEY') else 'Missing API Key ⚠️'}")
 
 # ==============================================================================
-# FOOTER SECTION
+# SECTION 8: APPLICATION FOOTER
 # ==============================================================================
 st.html(f'<div style="text-align:center; padding:20px 0; font-size:11px; color:rgba(255,255,255,0.5);">{APP_NAME} Suite v{APP_VERSION} | Powered by Streamlit, Mamdani Engine & LangChain AI</div>')
