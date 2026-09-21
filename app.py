@@ -13,10 +13,10 @@ st.set_page_config(
     page_title="FinWise Pro - Enterprise iOS Glass Adviser",
     page_icon="💎",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Application Metadata Constants
+# Application Metadata Constants & Versioning Information
 APP_NAME = "FinWise Pro"
 APP_VERSION = "2026.4.0"
 APP_BUILD = "Build-8921-Enterprise"
@@ -24,7 +24,7 @@ AUTHOR_NAME = "Vikas Ramsevak Pal"
 PLATFORM_TAG = "iOS Liquid Glass Enterprise Suite"
 
 # ==============================================================================
-# SECTION 2: APPLICATION STATE & DATABASE SIMULATION
+# SECTION 2: APPLICATION STATE & DATABASE INITIALIZATION SIMULATION
 # ==============================================================================
 if "app_initialized" not in st.session_state:
     st.session_state.app_initialized = True
@@ -32,10 +32,13 @@ if "app_initialized" not in st.session_state:
 
 if "income" not in st.session_state:
     st.session_state.income = 70000.0
+
 if "expenses" not in st.session_state:
     st.session_state.expenses = 30300.0
+
 if "savings" not in st.session_state:
     st.session_state.savings = 23000.0
+
 if "debt" not in st.session_state:
     st.session_state.debt = 6500.0
 
@@ -181,6 +184,7 @@ if "financial_goals" not in st.session_state:
 # SECTION 3: MAMDANI FUZZY LOGIC MATHEMATICAL ENGINE
 # ==============================================================================
 def trimf(x, a, b, c):
+    """Triangular Membership Function for Fuzzy Sets"""
     if x <= a or x >= c:
         return 0.0
     if a < x <= b:
@@ -190,6 +194,7 @@ def trimf(x, a, b, c):
     return 0.0
 
 def trapmf(x, a, b, c, d):
+    """Trapezoidal Membership Function for Fuzzy Sets"""
     if x <= a or x >= d:
         return 0.0
     if a <= x <= b:
@@ -201,6 +206,7 @@ def trapmf(x, a, b, c, d):
     return 0.0
 
 def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
+    """Computes Mamdani Fuzzy Inference Engine Score and Category."""
     exp_low = trapmf(exp_ratio, 0.0, 0.0, 30.0, 50.0)
     exp_med = trimf(exp_ratio, 40.0, 55.0, 70.0)
     exp_high = trapmf(exp_ratio, 60.0, 80.0, 100.0, 100.0)
@@ -275,6 +281,7 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
 # SECTION 4: LANGCHAIN & GEMINI LLM INTEGRATION MODULE
 # ==============================================================================
 def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
+    """Interfaces with LangChain and Google GenAI Gemini-2.5-flash for advisory."""
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return f"""
@@ -309,7 +316,7 @@ Client Financial Snapshot:
 
 Client Inquiry / Goal: "{query}"
 
-Provide a structured, executive financial advisory report.
+Provide a structured, executive financial advisory report with clear, actionable bullet points.
 """
         prompt = PromptTemplate(
             input_variables=["inc", "exp", "sav", "dbt", "score", "cat", "query"],
@@ -328,7 +335,7 @@ Provide a structured, executive financial advisory report.
         })
         return res.content
     except Exception as e:
-        return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments."
+        return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments. Error: {str(e)}"
 
 # ==============================================================================
 # SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE
@@ -363,7 +370,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .main {
     max-width: 100vw !important; 
 }
 
-/* OVERRIDE STREAMLIT FORM WRAPPERS & INPUTS */
 div[data-testid="stForm"] {
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
@@ -487,8 +493,22 @@ div[data-testid="stRadio"] div[role="radiogroup"] label {
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# SECTION 6: SIDEBAR NAVIGATION CONTROLLER
+# SECTION 6: DUAL MOBILE-DESKTOP NAVIGATION CONTROLLER
 # ==============================================================================
+nav_options = [
+    "📊 Executive Dashboard",
+    "💳 Expense & Income Manager",
+    "🧠 Mamdani Fuzzy Analytics",
+    "🔮 Wealth Predictions & SIP",
+    "✨ AI Copilot Advisor",
+    "📜 Transaction Audit Log",
+    "⚙️ Settings & Profile"
+]
+
+# Mobile Top Quick Select Box
+st.markdown("<div style='font-size:11px; font-weight:700; color:#60a5fa; margin-bottom:4px; text-transform:uppercase;'>📱 Quick Navigation Menu</div>", unsafe_allow_html=True)
+nav_choice = st.selectbox("Select View Option", nav_options, index=0, label_visibility="collapsed")
+
 with st.sidebar:
     st.html(f"""
     <div style="display:flex; align-items:center; gap:12px; padding:10px 5px 15px 5px;">
@@ -501,19 +521,9 @@ with st.sidebar:
     """)
     st.markdown("---")
 
-    nav_choice = st.radio(
-        "Navigation",
-        [
-            "📊 Executive Dashboard",
-            "💳 Expense & Income Manager",
-            "🧠 Mamdani Fuzzy Analytics",
-            "🔮 Wealth Predictions & SIP",
-            "✨ AI Copilot Advisor",
-            "📜 Transaction Audit Log",
-            "⚙️ Settings & Profile"
-        ],
-        index=0
-    )
+    sb_nav = st.radio("Navigation", nav_options, index=nav_options.index(nav_choice))
+    if sb_nav != nav_choice:
+        nav_choice = sb_nav
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.html(f"""
@@ -772,5 +782,7 @@ elif nav_choice == "⚙️ Settings & Profile":
     st.dataframe(st.session_state.financial_goals, use_container_width=True)
     st.info(f"LangChain Gemini LLM Status: {'Connected ✅' if os.getenv('GOOGLE_API_KEY') else 'Missing API Key ⚠️'}")
 
-# FOOTER
+# ==============================================================================
+# FOOTER SECTION
+# ==============================================================================
 st.html(f'<div style="text-align:center; padding:20px 0; font-size:11px; color:rgba(255,255,255,0.5);">{APP_NAME} Suite v{APP_VERSION} | Powered by Streamlit, Mamdani Engine & LangChain AI</div>')
