@@ -360,7 +360,7 @@ Format using clean, modern Markdown formatting.
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments."
 
 # ==============================================================================
-# SECTION 5: HIGH-END IOS GLASSMORPHISM CSS STYLING ENGINE
+# SECTION 5: HIGH-END IOS GLASSMORPHISM CSS STYLING ENGINE (UPDATED & PERFECTED)
 # ==============================================================================
 st.markdown("""
 <style>
@@ -368,7 +368,6 @@ st.markdown("""
 
 * {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .stApp {
@@ -462,27 +461,45 @@ st.markdown("""
     box-shadow: 0 0 20px rgba(96, 165, 250, 0.5) !important;
 }
 
+/* FIX SIDEBAR NAVIGATION RADIO BUTTON CIRCLES & STYLING */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%) !important;
     backdrop-filter: blur(40px) saturate(200%) !important;
     border-right: 1px solid rgba(255,255,255,0.18) !important;
 }
 
-div[data-testid="stRadio"] > label { display: none; }
-div[data-testid="stRadio"] label {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 14px 18px;
+div[data-testid="stRadio"] > label { display: none !important; }
+div[data-testid="stRadio"] div[role="radiogroup"] {
+    gap: 12px !important;
+}
+div[data-testid="stRadio"] div[role="radiogroup"] label {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    padding: 12px 18px !important;
     color: rgba(255, 255, 255, 0.85) !important;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    width: 100% !important;
 }
 
-div[data-testid="stRadio"] label:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateX(4px);
+div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Strictly hide radio circles and SVG icons */
+div[data-testid="stRadio"] div[role="radiogroup"] label input[type="radio"],
+div[data-testid="stRadio"] div[role="radiogroup"] label div[data-aria-hidden="true"],
+div[data-testid="stRadio"] div[role="radiogroup"] label svg {
+    display: none !important;
+}
+
+/* FIX VEGA-LITE / NATIVE STREAMLIT CHART CONTAINER BLOCK BACKGROUND */
+[data-testid="stVegaLiteChart"] {
+    background: transparent !important;
+    border-radius: 18px !important;
+    padding: 10px !important;
 }
 
 .stButton > button {
@@ -594,12 +611,13 @@ if nav_choice == "📊 Executive Dashboard":
         st.html(f'<div class="top-metric-card"><div class="metric-badge bg-purple">🏦</div><div class="top-metric-label">Debt Obligations</div><div class="top-metric-val">₹{dbt_tot:,.2f}</div></div>')
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.html("<div style='font-size:18px; font-weight:700;'>📊 Monthly Cashflow Breakdown</div>")
+    st.html("<div style='font-size:18px; font-weight:700; margin-bottom:12px;'>📊 Monthly Cashflow Breakdown</div>")
 
     chart_df = pd.DataFrame({
-        "Category": ["Income", "Expenses", "Investments", "Debt"],
-        "Amount (₹)": [inc_tot, exp_tot, inv_tot, dbt_tot]
-    }).set_index("Category")
+        "Financial Metric": ["Debt", "Expenses", "Income", "Investments"],
+        "Amount (₹)": [dbt_tot, exp_tot, inc_tot, inv_tot]
+    }).set_index("Financial Metric")
+    
     st.bar_chart(chart_df)
 
     st.markdown("<br>", unsafe_allow_html=True)
