@@ -1,0 +1,5 @@
+streamlit==1.64.0
+numpy
+langchain
+langchain-core
+langchain-google-genai
