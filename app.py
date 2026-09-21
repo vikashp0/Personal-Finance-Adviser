@@ -10,49 +10,38 @@ import streamlit as st
 # SECTION 1: SYSTEM & STREAMLIT PAGE CONFIGURATION
 # ==============================================================================
 st.set_page_config(
-    page_title="FinWise Pro - Enterprise iOS Glass Adviser",
+    page_title="FinWise Pro - Liquid iOS Glass Adviser",
     page_icon="💎",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Application Metadata Constants
-APP_NAME = "FinWise Pro"
-APP_VERSION = "2026.4.0"
-APP_BUILD = "Build-8921-Enterprise"
+APP_NAME = "FinWise"
 AUTHOR_NAME = "Vikas Ramsevak Pal"
-PLATFORM_TAG = "iOS Liquid Glass Enterprise Suite"
 
 # ==============================================================================
-# SECTION 2: APPLICATION STATE & DATABASE SIMULATION
+# SECTION 2: APPLICATION STATE MANAGEMENT
 # ==============================================================================
-if "app_initialized" not in st.session_state:
-    st.session_state.app_initialized = True
-    st.session_state.init_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+if "income" not in st.session_state:
+    st.session_state.income = 30000.0
+if "expenses" not in st.session_state:
+    st.session_state.expenses = 20000.0
+if "savings" not in st.session_state:
+    st.session_state.savings = 5000.0
+if "debt" not in st.session_state:
+    st.session_state.debt = 2000.0
 
 if "transactions" not in st.session_state:
     st.session_state.transactions = pd.DataFrame([
-        {"ID": "TXN-8001", "Date": "2026-09-01", "Category": "Base Salary", "Type": "Income", "Amount": 70000.0, "Method": "Direct Deposit / Bank", "Status": "Cleared", "Note": "Monthly Corporate Payroll Credit"},
-        {"ID": "TXN-8002", "Date": "2026-09-02", "Category": "Housing & Rent", "Type": "Expense", "Amount": 18000.0, "Method": "UPI Direct", "Status": "Cleared", "Note": "Apartment Maintenance & Monthly Rent"},
-        {"ID": "TXN-8003", "Date": "2026-09-03", "Category": "Groceries & Supplies", "Type": "Expense", "Amount": 8500.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Supermarket Restock & Household Items"},
-        {"ID": "TXN-8004", "Date": "2026-09-05", "Category": "Index Mutual Funds", "Type": "Investment", "Amount": 18000.0, "Method": "Auto-Debit SIP", "Status": "Cleared", "Note": "Nifty 50 Index Fund Systematic Plan"},
-        {"ID": "TXN-8005", "Date": "2026-09-07", "Category": "Utilities & Internet", "Type": "Expense", "Amount": 3800.0, "Method": "UPI Direct", "Status": "Cleared", "Note": "Electricity, Water, & Fiber Broadband"},
-        {"ID": "TXN-8006", "Date": "2026-09-10", "Category": "Vehicle Loan EMI", "Type": "Debt", "Amount": 6500.0, "Method": "Auto-Debit", "Status": "Cleared", "Note": "Bank Car Loan Fixed Installment"},
-        {"ID": "TXN-8007", "Date": "2026-09-12", "Category": "Dining & Leisure", "Type": "Expense", "Amount": 4500.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Weekend Dinners & Entertainment"},
-        {"ID": "TXN-8008", "Date": "2026-09-15", "Category": "Freelance Design", "Type": "Income", "Amount": 15000.0, "Method": "Wire Transfer", "Status": "Cleared", "Note": "UI/UX Design Client Project Fee"},
-        {"ID": "TXN-8009", "Date": "2026-09-18", "Category": "Tech Subscriptions", "Type": "Expense", "Amount": 2200.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Cloud Services & Software Licenses"},
-        {"ID": "TXN-8010", "Date": "2026-09-20", "Category": "Emergency Fund Deposit", "Type": "Investment", "Amount": 5000.0, "Method": "Bank Transfer", "Status": "Cleared", "Note": "High-Yield Savings Deposit"}
+        {"ID": "TXN-8001", "Date": "2026-09-01", "Category": "Base Salary", "Type": "Income", "Amount": 30000.0, "Method": "Direct Deposit / Bank", "Status": "Cleared", "Note": "Monthly Corporate Payroll Credit"},
+        {"ID": "TXN-8002", "Date": "2026-09-02", "Category": "Housing & Rent", "Type": "Expense", "Amount": 12000.0, "Method": "UPI Direct", "Status": "Cleared", "Note": "Apartment Maintenance & Monthly Rent"},
+        {"ID": "TXN-8003", "Date": "2026-09-03", "Category": "Groceries & Supplies", "Type": "Expense", "Amount": 8000.0, "Method": "Credit Card", "Status": "Cleared", "Note": "Supermarket Restock & Household Items"},
+        {"ID": "TXN-8004", "Date": "2026-09-05", "Category": "Index Mutual Funds", "Type": "Investment", "Amount": 5000.0, "Method": "Auto-Debit SIP", "Status": "Cleared", "Note": "Nifty 50 Index Fund Systematic Plan"},
+        {"ID": "TXN-8006", "Date": "2026-09-10", "Category": "Vehicle Loan EMI", "Type": "Debt", "Amount": 2000.0, "Method": "Auto-Debit", "Status": "Cleared", "Note": "Bank Loan Fixed Installment"}
     ])
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-
-if "financial_goals" not in st.session_state:
-    st.session_state.financial_goals = pd.DataFrame([
-        {"Goal ID": "G-101", "Goal Name": "Emergency Liquid Cushion", "Category": "Risk Reserve", "Target Amount (₹)": 250000.0, "Current Saved (₹)": 160000.0, "Target Date": "2027-03-31", "Priority": "High"},
-        {"Goal ID": "G-102", "Goal Name": "International Tech Summit", "Category": "Travel & Learning", "Target Amount (₹)": 180000.0, "Current Saved (₹)": 75000.0, "Target Date": "2027-08-15", "Priority": "Medium"},
-        {"Goal ID": "G-103", "Goal Name": "Long-Term Retirement SIP", "Category": "Wealth Corpus", "Target Amount (₹)": 5000000.0, "Current Saved (₹)": 650000.0, "Target Date": "2032-12-31", "Priority": "Critical"}
-    ])
 
 # ==============================================================================
 # SECTION 3: MAMDANI FUZZY LOGIC MATHEMATICAL ENGINE
@@ -124,16 +113,10 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
     elif score >= 40.0: category = "Fair"
     else: category = "Poor"
 
-    membership_details = {
-        "exp": {"Low": exp_low, "Med": exp_med, "High": exp_high},
-        "sav": {"Poor": sav_poor, "Mod": sav_mod, "Good": sav_good},
-        "dbt": {"Low": dbt_low, "Med": dbt_med, "High": dbt_high}
-    }
-
-    return round(score, 1), category, rules, membership_details
+    return round(score, 1), category
 
 # ==============================================================================
-# SECTION 4: LANGCHAIN & GEMINI LLM INTEGRATION MODULE
+# SECTION 4: AI COPILOT ENGINE
 # ==============================================================================
 def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
     api_key = os.getenv("GOOGLE_API_KEY")
@@ -142,7 +125,7 @@ def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
 ### 📊 FinWise Automated Health Assessment
 * **Mamdani Fuzzy Rating:** **{score}/100 ({cat})**
 * **Monthly Income:** ₹{inc:,.2f} | **Expenses:** ₹{exp:,.2f}
-* **Investments:** ₹{sav:,.2f} | **Debt Obligations:** ₹{dbt:,.2f}
+* **Investments/Savings:** ₹{sav:,.2f} | **Debt Obligations:** ₹{dbt:,.2f}
 
 #### 💡 Executive Advisory Recommendations:
 1. **Debt Cap Strategy:** Maintain total monthly debt service payments below 30% of total income.
@@ -188,7 +171,7 @@ Provide a structured, executive financial advisory report.
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments."
 
 # ==============================================================================
-# SECTION 5: FUTURISTIC IOS LIQUID GLASS OVERRIDE CSS ENGINE
+# SECTION 5: ULTRA ULTRA LIQUID iOS GLASSMORPHISM CSS ENGINE
 # ==============================================================================
 st.markdown("""
 <style>
@@ -196,102 +179,50 @@ st.markdown("""
 
 * {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    box-sizing: border-box;
 }
 
-/* Base Wallpaper Background */
+/* 1. App Wallpaper Background with Vibrant Fluid Mesh Gradient Orbs */
 .stApp {
     background: 
-        radial-gradient(circle at 10% 15%, rgba(37, 99, 235, 0.45), transparent 45%),
-        radial-gradient(circle at 90% 15%, rgba(147, 51, 234, 0.40), transparent 45%),
-        radial-gradient(circle at 50% 85%, rgba(13, 148, 136, 0.30), transparent 50%),
-        linear-gradient(135deg, #030712 0%, #0b1329 50%, #030712 100%) !important;
-    color: #ffffff;
+        radial-gradient(circle at 12% 15%, rgba(16, 185, 129, 0.28), transparent 40%),
+        radial-gradient(circle at 85% 18%, rgba(139, 92, 246, 0.35), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.30), transparent 50%),
+        radial-gradient(circle at 80% 85%, rgba(244, 63, 94, 0.20), transparent 45%),
+        linear-gradient(135deg, #050b18 0%, #0a1128 50%, #030712 100%) !important;
+    color: #ffffff !important;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1440px; }
+.block-container { padding-top: 1.2rem; padding-bottom: 2rem; max-width: 1440px; }
 
-/* OVERRIDE STREAMLIT DEFAULT BLACK BACKGROUNDS ON INPUTS & TABLES */
-.stNumberInput div[data-baseweb="input"], 
-.stTextInput div[data-baseweb="input"], 
-.stSelectbox div[data-baseweb="select"], 
-.stTextArea div[data-baseweb="textarea"] {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 16px !important;
-    backdrop-filter: blur(20px) !important;
-    color: #ffffff !important;
-}
-
-.stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: #ffffff !important;
-    background: transparent !important;
-}
-
-/* DATAFRAME GLASSMORPHISM OVERRIDE */
-div[data-testid="stDataFrame"] {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 20px !important;
-    backdrop-filter: blur(25px) !important;
-    padding: 8px !important;
-}
-
-div[data-testid="stDataFrame"] * {
-    background: transparent !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* NATIVE CHART CONTAINER OVERRIDE */
-[data-testid="stVegaLiteChart"], [data-testid="stLineChart"] {
-    background: transparent !important;
-    border: none !important;
-}
-
-/* iOS Glass Card Panel */
-.glass-panel, .top-metric-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    backdrop-filter: blur(40px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-    border-radius: 24px !important;
-    padding: 24px;
-}
-
-.metric-badge {
-    width: 46px; height: 46px; border-radius: 16px;
-    display: flex; align-items: center; justify-content: center; font-size: 22px;
-    margin-bottom: 12px;
-}
-
-.bg-green { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
-.bg-pink { background: rgba(244, 63, 94, 0.25); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); box-shadow: 0 0 20px rgba(244, 63, 94, 0.3); }
-.bg-blue { background: rgba(59, 130, 246, 0.25); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-.bg-purple { background: rgba(139, 92, 246, 0.25); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
-
-.top-metric-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
-.top-metric-val { font-size: 28px; font-weight: 800; color: #ffffff; margin: 4px 0 2px 0; }
-
-/* SIDEBAR NAVIGATION CLEAN RADIO BUTTONS */
+/* 2. Absolute Streamlit Native Elements Override (Destroys Black Containers Completely) */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%) !important;
-    backdrop-filter: blur(40px) saturate(200%) !important;
-    border-right: 1px solid rgba(255,255,255,0.18) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(50px) saturate(210%) !important;
+    -webkit-backdrop-filter: blur(50px) saturate(210%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3) !important;
 }
 
 div[data-testid="stRadio"] > label { display: none !important; }
 div[data-testid="stRadio"] div[role="radiogroup"] { gap: 10px !important; }
 div[data-testid="stRadio"] div[role="radiogroup"] label {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 18px !important;
     padding: 12px 18px !important;
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 600 !important;
     cursor: pointer !important;
     width: 100% !important;
+    transition: all 0.3s ease !important;
+}
+
+div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
 }
 
 div[data-testid="stRadio"] div[role="radiogroup"] label input[type="radio"],
@@ -300,34 +231,123 @@ div[data-testid="stRadio"] div[role="radiogroup"] label svg {
     display: none !important;
 }
 
-/* HIGH-END FUTURISTIC LIQUID GLASS GRAPH CSS */
-.ios-chart-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-    padding: 28px;
-    backdrop-filter: blur(30px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-    margin-top: 15px;
+/* Form Controls Glassmorphism */
+div[data-baseweb="input"], div[data-baseweb="select"], div[data-baseweb="textarea"] {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 16px !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(30px) !important;
 }
 
-.chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-.chart-title { font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 10px; }
-.chart-row { margin-bottom: 20px; }
-.chart-label-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
-.chart-track { width: 100%; height: 18px; background: rgba(255, 255, 255, 0.06); border-radius: 30px; overflow: hidden; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.1); }
-.chart-fill { height: 100%; border-radius: 30px; transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.stNumberInput input, .stTextInput input, .stTextArea textarea {
+    color: #ffffff !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+}
 
-.fill-income { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
-.fill-expense { background: linear-gradient(90deg, #f43f5e 0%, #fb7185 100%); box-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
-.fill-investment { background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
-.fill-debt { background: linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%); box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+/* Dataframe Clean Glass Override */
+div[data-testid="stDataFrame"], div[data-testid="stTable"] {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 22px !important;
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    padding: 10px !important;
+}
+div[data-testid="stDataFrame"] * {
+    background: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 3. Pure Custom Liquid Glassmorphism Component Cards */
+.liquid-glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(50px) saturate(210%);
+    -webkit-backdrop-filter: blur(50px) saturate(210%);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.liquid-glass-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* Metric Cards with Glowing Specular Highlights */
+.metric-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.metric-card-inner {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 22px;
+    padding: 18px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.25);
+}
+
+.metric-badge-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.badge-green { background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+.badge-pink { background: rgba(244, 63, 94, 0.25); border: 1px solid rgba(244, 63, 94, 0.5); color: #fb7185; box-shadow: 0 0 20px rgba(244, 63, 94, 0.4); }
+.badge-blue { background: rgba(59, 130, 246, 0.25); border: 1px solid rgba(59, 130, 246, 0.5); color: #60a5fa; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.25); border: 1px solid rgba(139, 92, 246, 0.5); color: #c084fc; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+
+.metric-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.8px; }
+.metric-value { font-size: 26px; font-weight: 800; color: #ffffff; margin: 4px 0 6px 0; }
+.metric-foot { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+/* 4. Action Glass Pill Button */
+.action-pill-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255,255,255,0.4);
+    transition: all 0.3s ease;
+}
 
 .stButton > button {
-    width: 100%; border-radius: 16px; padding: 16px; font-size: 16px; font-weight: 700; color: #ffffff;
+    width: 100%; border-radius: 20px; padding: 16px; font-size: 16px; font-weight: 800; color: #ffffff;
     background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 0 30px rgba(37, 99, 235, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px) scale(1.008) !important;
+    box-shadow: 0 18px 45px rgba(124, 58, 237, 0.7), inset 0 1px 3px rgba(255, 255, 255, 0.6) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -338,10 +358,10 @@ div[data-testid="stRadio"] div[role="radiogroup"] label svg {
 with st.sidebar:
     st.html(f"""
     <div style="display:flex; align-items:center; gap:12px; padding:10px 5px 15px 5px;">
-        <div style="width:46px; height:46px; border-radius:16px; background:linear-gradient(135deg, #2563eb, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 0 25px rgba(37,99,235,0.8);">💎</div>
+        <div style="width:46px; height:46px; border-radius:16px; background:linear-gradient(135deg, #2563eb, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 0 25px rgba(37,99,235,0.8);">📊</div>
         <div>
             <div style="font-size:22px; font-weight:800; color:#ffffff; letter-spacing:-0.5px;">{APP_NAME}</div>
-            <div style="font-size:11px; color:rgba(255,255,255,0.6);">{PLATFORM_TAG}</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.6);">Plan Smarter • Live Better</div>
         </div>
     </div>
     """)
@@ -350,153 +370,247 @@ with st.sidebar:
     nav_choice = st.radio(
         "Navigation",
         [
-            "📊 Executive Dashboard",
-            "💳 Expense & Income Manager",
-            "🧠 Mamdani Fuzzy Analytics",
-            "🔮 Wealth Predictions & SIP",
-            "✨ AI Copilot Advisor",
-            "📜 Transaction Audit Log",
-            "⚙️ Settings & Profile"
+            "Home",
+            "Dashboard",
+            "Expenses",
+            "AI Adviser",
+            "Insights",
+            "Settings"
         ],
         index=0
     )
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.html(f"""
-    <div style="padding:16px; border-radius:18px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);">
+    <div style="padding:16px; border-radius:20px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); backdrop-filter:blur(30px);">
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); font-style:italic; margin-bottom:12px;">"A better financial future starts with better decisions."</div>
         <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, #2563eb, #10b981); display:flex; align-items:center; justify-content:center; font-weight:800;">V</div>
             <div>
                 <div style="font-size:14px; font-weight:700;">{AUTHOR_NAME}</div>
-                <div style="font-size:11px; color:#34d399;">● Enterprise Pro User</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.6);">Student</div>
             </div>
         </div>
     </div>
     """)
 
-# COMPUTATION OF AGGREGATES
-df_trans = st.session_state.transactions
-inc_tot = df_trans[df_trans["Type"] == "Income"]["Amount"].sum()
-exp_tot = df_trans[df_trans["Type"] == "Expense"]["Amount"].sum()
-inv_tot = df_trans[df_trans["Type"] == "Investment"]["Amount"].sum()
-dbt_tot = df_trans[df_trans["Type"] == "Debt"]["Amount"].sum()
+# COMPUTATION OF REAL-TIME AGGREGATES
+inc_tot = st.session_state.income
+exp_tot = st.session_state.expenses
+inv_tot = st.session_state.savings
+dbt_tot = st.session_state.debt
 
-if inc_tot == 0.0: inc_tot = 1.0
+exp_ratio = min((exp_tot / (inc_tot if inc_tot > 0 else 1.0)) * 100.0, 100.0)
+sav_ratio = min((inv_tot / (inc_tot if inc_tot > 0 else 1.0)) * 100.0, 100.0)
+dbt_ratio = min((dbt_tot / (inc_tot if inc_tot > 0 else 1.0)) * 100.0, 100.0)
 
-exp_ratio = min((exp_tot / inc_tot) * 100.0, 100.0)
-sav_ratio = min((inv_tot / inc_tot) * 100.0, 100.0)
-dbt_ratio = min((dbt_tot / inc_tot) * 100.0, 100.0)
-
-fz_score, fz_cat, fz_rules, fz_mems = evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio)
+fz_score, fz_cat = evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio)
 
 # ==============================================================================
-# TAB 1: 📊 EXECUTIVE DASHBOARD MODULE
+# TAB 1: 🏠 HOME MODULE (MATCHES REFERENCE IMAGE EXACTLY)
 # ==============================================================================
-if nav_choice == "📊 Executive Dashboard":
-    h_c1, h_c2 = st.columns([3, 1])
-    with h_c1:
+if nav_choice == "Home":
+    # Header Section
+    h1, h2 = st.columns([3, 1.2])
+    with h1:
         st.html("""
-        <div style="font-size:11px; font-weight:700; color:#60a5fa; letter-spacing:2px; text-transform:uppercase;">ENTERPRISE FINANCIAL INTELLIGENCE</div>
-        <div style="font-size:38px; font-weight:800; color:#ffffff; margin:4px 0;">Executive Wealth & Health Dashboard</div>
-        <div style="font-size:14px; color:rgba(255,255,255,0.7);">Real-time Mamdani Fuzzy Logic Scoring & LangChain AI Advisory.</div>
+        <div style="margin-bottom:20px;">
+            <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.6); letter-spacing:2px; text-transform:uppercase;">WELCOME TO</div>
+            <div style="font-size:42px; font-weight:800; color:#ffffff; margin:2px 0 6px 0; letter-spacing:-1px;">Personal Finance and<br>Expense Management Adviser</div>
+            <div style="font-size:14px; color:rgba(255,255,255,0.7);">Track. Analyze. Plan. Achieve. — Smarter Money Decisions with AI & Fuzzy Logic.</div>
+        </div>
         """)
-    with h_c2:
+    with h2:
+        now_str = datetime.datetime.now().strftime("%a, %d %b %Y<br>%I:%M %p")
         st.html(f"""
-        <div class="glass-panel" style="padding:18px; text-align:center;">
-            <div style="font-size:11px; color:rgba(255,255,255,0.6);">FUZZY HEALTH RATING</div>
-            <div style="font-size:32px; font-weight:800; color:#60a5fa;">{fz_score}/100</div>
-            <div style="font-size:13px; font-weight:700; color:#c084fc;">{fz_cat}</div>
+        <div class="liquid-glass-card" style="text-align:center; padding:18px;">
+            <div style="font-size:11px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; margin-bottom:6px;">{now_str}</div>
+            <div style="font-size:13px; font-style:italic; color:#c084fc; font-weight:600;">"Manage your money today for a brighter tomorrow."</div>
         </div>
         """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    m1, m2, m3, m4 = st.columns(4)
-    with m1: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-green">💼</div><div class="top-metric-label">Total Monthly Income</div><div class="top-metric-val">₹{inc_tot:,.2f}</div></div>')
-    with m2: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-pink">💳</div><div class="top-metric-label">Total Expenses</div><div class="top-metric-val">₹{exp_tot:,.2f}</div></div>')
-    with m3: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-blue">📈</div><div class="top-metric-label">Investments & SIPs</div><div class="top-metric-val">₹{inv_tot:,.2f}</div></div>')
-    with m4: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-purple">🏦</div><div class="top-metric-label">Debt Obligations</div><div class="top-metric-val">₹{dbt_tot:,.2f}</div></div>')
+    # 4 Top Metric Cards with Sparkline Indicators
+    st.html(f"""
+    <div class="metric-card-grid">
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-green">💼</div>
+            <div class="metric-title">Monthly Income</div>
+            <div class="metric-value">₹{inc_tot:,.0f}</div>
+            <div class="metric-foot" style="color:#34d399;">
+                <span>↑ +0%</span>
+                <svg width="60" height="18" viewBox="0 0 60 18"><path d="M0,15 Q15,5 30,12 T60,3" fill="none" stroke="#34d399" stroke-width="2.5"/></svg>
+            </div>
+        </div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-pink">💳</div>
+            <div class="metric-title">Monthly Expenses</div>
+            <div class="metric-value">₹{exp_tot:,.0f}</div>
+            <div class="metric-foot" style="color:#fb7185;">
+                <span>↑ +0%</span>
+                <svg width="60" height="18" viewBox="0 0 60 18"><path d="M0,12 Q15,16 30,8 T60,14" fill="none" stroke="#fb7185" stroke-width="2.5"/></svg>
+            </div>
+        </div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-blue">📈</div>
+            <div class="metric-title">Monthly Savings</div>
+            <div class="metric-value">₹{inv_tot:,.0f}</div>
+            <div class="metric-foot" style="color:#60a5fa;">
+                <span>↑ +0%</span>
+                <svg width="60" height="18" viewBox="0 0 60 18"><path d="M0,16 Q15,10 30,14 T60,2" fill="none" stroke="#60a5fa" stroke-width="2.5"/></svg>
+            </div>
+        </div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-purple">🏛️</div>
+            <div class="metric-title">Monthly Debt</div>
+            <div class="metric-value">₹{dbt_tot:,.0f}</div>
+            <div class="metric-foot" style="color:#c084fc;">
+                <span>↑ +0%</span>
+                <svg width="60" height="18" viewBox="0 0 60 18"><path d="M0,14 Q15,8 30,12 T60,5" fill="none" stroke="#c084fc" stroke-width="2.5"/></svg>
+            </div>
+        </div>
+    </div>
+    """)
 
-    # HIGH-END FUTURISTIC LIQUID GLASS GRAPH
-    max_val = max(inc_tot, exp_tot, inv_tot, dbt_tot, 1.0)
-    inc_pct = (inc_tot / max_val) * 100
-    exp_pct = (exp_tot / max_val) * 100
-    inv_pct = (inv_tot / max_val) * 100
-    dbt_pct = (dbt_tot / max_val) * 100
+    # Interactive Input Form Card
+    st.html("""
+    <div style="margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+        <div>
+            <div style="font-size:20px; font-weight:800; color:#ffffff;">📊 Enter Your Financial Details</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.7);">Provide your monthly financial information to get AI-powered insights.</div>
+        </div>
+    </div>
+    """)
+
+    # Input Fields in 4 Columns
+    i1, i2, i3, i4 = st.columns(4)
+    with i1:
+        new_inc = st.number_input("Monthly Income (₹)", min_value=0.0, value=float(st.session_state.income), step=1000.0, help="Your total monthly income")
+    with i2:
+        new_exp = st.number_input("Monthly Expenses (₹)", min_value=0.0, value=float(st.session_state.expenses), step=500.0, help="All your monthly expenses")
+    with i3:
+        new_sav = st.number_input("Monthly Savings (₹)", min_value=0.0, value=float(st.session_state.savings), step=500.0, help="Amount you save monthly")
+    with i4:
+        new_dbt = st.number_input("Monthly Debt Payment (₹)", min_value=0.0, value=float(st.session_state.debt), step=500.0, help="EMI or loan payments")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("✨ Analyze My Finances", use_container_width=True):
+        st.session_state.income = new_inc
+        st.session_state.expenses = new_exp
+        st.session_state.savings = new_sav
+        st.session_state.debt = new_dbt
+        st.success("Financial Snapshot Updated Successfully!")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 3 Bottom Advisory Feature Cards
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        st.html("""
+        <div class="liquid-glass-card" style="border-left:4px solid #10b981;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <div style="width:36px; height:36px; border-radius:12px; background:rgba(16,185,129,0.25); display:flex; align-items:center; justify-content:center; color:#34d399; font-size:18px;">⚙️</div>
+                <div style="font-size:15px; font-weight:800;">AI-Powered Advice</div>
+            </div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.7);">Get personalized financial recommendations using LangChain and LLM.</div>
+        </div>
+        """)
+    with f2:
+        st.html("""
+        <div class="liquid-glass-card" style="border-left:4px solid #8b5cf6;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <div style="width:36px; height:36px; border-radius:12px; background:rgba(139,92,246,0.25); display:flex; align-items:center; justify-content:center; color:#c084fc; font-size:18px;">🧠</div>
+                <div style="font-size:15px; font-weight:800;">Fuzzy Logic Analysis</div>
+            </div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.7);">Advanced fuzzy inference system to analyze your financial health score.</div>
+        </div>
+        """)
+    with f3:
+        st.html("""
+        <div class="liquid-glass-card" style="border-left:4px solid #f59e0b;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <div style="width:36px; height:36px; border-radius:12px; background:rgba(245,158,11,0.25); display:flex; align-items:center; justify-content:center; color:#fbbf24; font-size:18px;">🛡️</div>
+                <div style="font-size:15px; font-weight:800;">Better Financial Future</div>
+            </div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.7);">Make informed decisions and achieve your long-term financial goals.</div>
+        </div>
+        """)
+
+# ==============================================================================
+# TAB 2: 📊 DASHBOARD & ANALYTICS MODULE
+# ==============================================================================
+elif nav_choice == "Dashboard":
+    st.html("""
+    <div class="liquid-glass-card" style="margin-bottom:20px;">
+        <h2>📊 Financial Dashboard & Cashflow Analytics</h2>
+        <p style="color:rgba(255,255,255,0.7);">Visual analytics powered by real-time ledger entries and Mamdani Fuzzy Scoring.</p>
+    </div>
+    """)
+    
+    # Liquid SVG Cashflow Progress Bars Card
+    max_v = max(inc_tot, exp_tot, inv_tot, dbt_tot, 1.0)
+    inc_p, exp_p, sav_p, dbt_p = (inc_tot/max_v)*100, (exp_tot/max_v)*100, (inv_tot/max_v)*100, (dbt_tot/max_v)*100
 
     st.html(f"""
-    <div class="ios-chart-card">
-        <div class="chart-header">
-            <div class="chart-title">📊 Monthly Liquid Cashflow Analytics</div>
-            <div style="font-size:12px; color:#34d399; font-weight:700;">● Live Ledger Synced</div>
-        </div>
+    <div class="liquid-glass-card">
+        <div style="font-size:18px; font-weight:800; margin-bottom:20px;">📊 Monthly Cashflow Breakdown</div>
         
-        <div class="chart-row">
-            <div class="chart-label-group">
-                <span style="color:#34d399;">💼 Income</span>
-                <span>₹{inc_tot:,.2f} ({inc_pct:.1f}%)</span>
+        <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                <span style="color:#34d399;">💼 Income</span><span>₹{inc_tot:,.2f}</span>
             </div>
-            <div class="chart-track">
-                <div class="chart-fill fill-income" style="width: {inc_pct}%;"></div>
-            </div>
-        </div>
-
-        <div class="chart-row">
-            <div class="chart-label-group">
-                <span style="color:#fb7185;">💳 Expenses</span>
-                <span>₹{exp_tot:,.2f} ({exp_pct:.1f}%)</span>
-            </div>
-            <div class="chart-track">
-                <div class="chart-fill fill-expense" style="width: {exp_pct}%;"></div>
+            <div style="width:100%; height:16px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+                <div style="width:{inc_p}%; height:100%; background:linear-gradient(90deg, #10b981, #34d399); box-shadow:0 0 15px rgba(16,185,129,0.6); border-radius:20px;"></div>
             </div>
         </div>
 
-        <div class="chart-row">
-            <div class="chart-label-group">
-                <span style="color:#60a5fa;">📈 Investments</span>
-                <span>₹{inv_tot:,.2f} ({inv_pct:.1f}%)</span>
+        <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                <span style="color:#fb7185;">💳 Expenses</span><span>₹{exp_tot:,.2f}</span>
             </div>
-            <div class="chart-track">
-                <div class="chart-fill fill-investment" style="width: {inv_pct}%;"></div>
+            <div style="width:100%; height:16px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+                <div style="width:{exp_p}%; height:100%; background:linear-gradient(90deg, #f43f5e, #fb7185); box-shadow:0 0 15px rgba(244,63,94,0.6); border-radius:20px;"></div>
             </div>
         </div>
 
-        <div class="chart-row">
-            <div class="chart-label-group">
-                <span style="color:#c084fc;">🏦 Debt Obligations</span>
-                <span>₹{dbt_tot:,.2f} ({dbt_pct:.1f}%)</span>
+        <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                <span style="color:#60a5fa;">📈 Savings / Investments</span><span>₹{inv_tot:,.2f}</span>
             </div>
-            <div class="chart-track">
-                <div class="chart-fill fill-debt" style="width: {dbt_pct}%;"></div>
+            <div style="width:100%; height:16px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+                <div style="width:{sav_p}%; height:100%; background:linear-gradient(90deg, #3b82f6, #60a5fa); box-shadow:0 0 15px rgba(59,130,246,0.6); border-radius:20px;"></div>
+            </div>
+        </div>
+
+        <div>
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                <span style="color:#c084fc;">🏛️ Debt Service</span><span>₹{dbt_tot:,.2f}</span>
+            </div>
+            <div style="width:100%; height:16px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+                <div style="width:{dbt_p}%; height:100%; background:linear-gradient(90deg, #8b5cf6, #c084fc); box-shadow:0 0 15px rgba(139,92,246,0.6); border-radius:20px;"></div>
             </div>
         </div>
     </div>
     """)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.html("<div style='font-size:18px; font-weight:700;'>🤖 AI-Generated Executive Advisory Report</div>")
-    q_input = st.text_input("Specific Financial Query:", placeholder="e.g. How can I optimize my monthly budget and increase savings?")
-    if st.button("✨ Refresh AI Advisory Report"):
-        with st.spinner("Synthesizing metrics with LangChain & Gemini LLM..."):
-            report = get_ai_advice(q_input, inc_tot, exp_tot, inv_tot, dbt_tot, fz_score, fz_cat)
-            st.html(f'<div class="glass-panel" style="border-left:4px solid #a855f7;">{report}</div>')
-
 # ==============================================================================
-# TAB 2: 💳 EXPENSE & INCOME MANAGER MODULE
+# TAB 3: 💳 EXPENSES & LEDGER MODULE
 # ==============================================================================
-elif nav_choice == "💳 Expense & Income Manager":
-    st.html('<div class="glass-panel"><h2>💳 Transaction & Cashflow Ledger</h2><p style="color:rgba(255,255,255,0.7);">Record transactions to update metrics real-time.</p></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
+elif nav_choice == "Expenses":
+    st.html("""
+    <div class="liquid-glass-card" style="margin-bottom:20px;">
+        <h2>💳 Expense Ledger & Transaction Entry</h2>
+        <p style="color:rgba(255,255,255,0.7);">Manage individual transactions to maintain audit trails.</p>
+    </div>
+    """)
+    
+    t1, t2, t3 = st.columns(3)
+    with t1: t_type = st.selectbox("Transaction Type", ["Income", "Expense", "Investment", "Debt"])
+    with t2: t_cat = st.text_input("Category Name", value="General Outflow")
+    with t3: t_amt = st.number_input("Amount (₹)", min_value=1.0, value=1500.0, step=100.0)
 
-    t_c1, t_c2, t_c3, t_c4, t_c5 = st.columns([2, 2, 2, 2, 3])
-    with t_c1: t_date = st.date_input("Date", datetime.date.today())
-    with t_c2: t_type = st.selectbox("Type", ["Income", "Expense", "Investment", "Debt"])
-    with t_c3: t_cat = st.text_input("Category", value="General Outflow")
-    with t_c4: t_amt = st.number_input("Amount (₹)", min_value=1.0, value=2500.0, step=500.0)
-    with t_c5: t_note = st.text_input("Note", value="Details")
-
-    if st.button("➕ Record Transaction To Ledger"):
+    if st.button("➕ Record Transaction"):
         new_id = f"TXN-{len(st.session_state.transactions) + 8001}"
-        new_row = pd.DataFrame([{"ID": new_id, "Date": str(t_date), "Category": t_cat, "Type": t_type, "Amount": float(t_amt), "Method": "Manual Entry", "Status": "Cleared", "Note": t_note}])
+        new_row = pd.DataFrame([{"ID": new_id, "Date": str(datetime.date.today()), "Category": t_cat, "Type": t_type, "Amount": float(t_amt), "Method": "Manual App Entry", "Status": "Cleared", "Note": "Recorded Entry"}])
         st.session_state.transactions = pd.concat([st.session_state.transactions, new_row], ignore_index=True)
         st.success(f"Transaction {new_id} Successfully Recorded!")
 
@@ -504,117 +618,57 @@ elif nav_choice == "💳 Expense & Income Manager":
     st.dataframe(st.session_state.transactions, use_container_width=True)
 
 # ==============================================================================
-# TAB 3: 🧠 MAMDANI FUZZY ANALYTICS MODULE
+# TAB 4: ✨ AI ADVISER MODULE
 # ==============================================================================
-elif nav_choice == "🧠 Mamdani Fuzzy Analytics":
-    st.html('<div class="glass-panel"><h2>🧠 Mamdani Fuzzy Inference Engine Diagnostics</h2><p style="color:rgba(255,255,255,0.7);">Membership degree ($\mu$) evaluation.</p></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    fc1, fc2, fc3 = st.columns(3)
-    with fc1: st.html(f'<div class="glass-panel"><h4>Expense Ratio ({exp_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["exp"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["exp"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["exp"]["High"]:.2f}</b></p></div>')
-    with fc2: st.html(f'<div class="glass-panel"><h4>Savings Ratio ({sav_ratio:.1f}%)</h4><p>• Poor: <b>{fz_mems["sav"]["Poor"]:.2f}</b></p><p>• Moderate: <b>{fz_mems["sav"]["Mod"]:.2f}</b></p><p>• Good: <b>{fz_mems["sav"]["Good"]:.2f}</b></p></div>')
-    with fc3: st.html(f'<div class="glass-panel"><h4>Debt Ratio ({dbt_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["dbt"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["dbt"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["dbt"]["High"]:.2f}</b></p></div>')
-
-# ==============================================================================
-# TAB 4: 🔮 WEALTH PREDICTIONS & SIP MODULE (INTERACTIVE GLASS GRAPH)
-# ==============================================================================
-elif nav_choice == "🔮 Wealth Predictions & SIP":
-    st.html('<div class="glass-panel"><h2>🔮 Wealth Growth & Compound Investment Simulator</h2></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    pc1, pc2, pc3 = st.columns(3)
-    with pc1: sip_amt = st.number_input("Monthly SIP (₹)", value=inv_tot if inv_tot > 0.0 else 18000.0, step=1000.0)
-    with pc2: rate = st.slider("Expected Return (%)", 1.0, 25.0, 12.0)
-    with pc3: years = st.slider("Horizon (Years)", 1, 30, 10)
-
-    m_count = years * 12
-    r_monthly = (rate / 100.0) / 12.0
-    timeline, curr = [], 0.0
-    for m in range(1, m_count + 1):
-        curr = (curr + sip_amt) * (1.0 + r_monthly)
-        timeline.append(curr)
-
-    # FUTURISTIC INTERACTIVE LIQUID GLASS SVG LINE GRAPH
-    max_corpus = timeline[-1]
-    svg_points = []
-    width, height = 900, 260
-    for idx, val in enumerate(timeline):
-        x = (idx / (m_count - 1)) * width if m_count > 1 else 0
-        y = height - ((val / max_corpus) * (height - 30)) - 15
-        svg_points.append(f"{x:.1f},{y:.1f}")
-
-    points_str = " ".join(svg_points)
-
-    st.html(f"""
-    <div class="ios-chart-card" style="margin-top:10px;">
-        <div class="chart-header">
-            <div class="chart-title">📈 Projected Portfolio Curve</div>
-            <div style="font-size:13px; color:#60a5fa; font-weight:700;">Target: ₹{max_corpus:,.2f}</div>
-        </div>
-        <div style="width:100%; overflow-x:auto;">
-            <svg viewBox="0 0 900 260" style="width:100%; height:260px;">
-                <defs>
-                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#3b82f6" />
-                        <stop offset="50%" stop-color="#a855f7" />
-                        <stop offset="100%" stop-color="#34d399" />
-                    </linearGradient>
-                    <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="rgba(168, 85, 247, 0.4)" />
-                        <stop offset="100%" stop-color="rgba(168, 85, 247, 0.0)" />
-                    </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                <polygon points="0,260 {points_str} 900,260" fill="url(#areaGrad)" />
-                <polyline points="{points_str}" fill="none" stroke="url(#lineGrad)" stroke-width="4" filter="url(#glow)" />
-            </svg>
-        </div>
+elif nav_choice == "AI Adviser":
+    st.html("""
+    <div class="liquid-glass-card" style="margin-bottom:20px;">
+        <h2>✨ AI Copilot Financial Advisory</h2>
+        <p style="color:rgba(255,255,255,0.7);">Get tailored financial strategies generated by Gemini AI.</p>
     </div>
     """)
-    st.success(f"🎯 **Projected Portfolio Value after {years} Years:** ₹{max_corpus:,.2f}")
-
-# ==============================================================================
-# TAB 5: ✨ AI COPILOT ADVISOR MODULE
-# ==============================================================================
-elif nav_choice == "✨ AI Copilot Advisor":
-    st.html('<div class="glass-panel"><h2>✨ FinWise Conversational AI Copilot</h2></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    user_q = st.text_area("Your Inquiry:", value="How can I optimize tax planning while building my retirement corpus?")
+    
+    user_q = st.text_area("Your Financial Inquiry:", value="How can I optimize my monthly budget to allocate 25% towards long-term mutual funds?")
     if st.button("💬 Ask AI Copilot"):
-        with st.spinner("Analyzing profile..."):
+        with st.spinner("Analyzing profile & generating advisory report..."):
             ans = get_ai_advice(user_q, inc_tot, exp_tot, inv_tot, dbt_tot, fz_score, fz_cat)
             st.session_state.chat_history.append({"q": user_q, "a": ans})
 
     for chat in reversed(st.session_state.chat_history):
-        st.html(f'<div class="glass-panel" style="margin-bottom:14px;"><b>Q: {chat["q"]}</b><hr style="border-color:rgba(255,255,255,0.1);"><div>{chat["a"]}</div></div>')
+        st.html(f"""
+        <div class="liquid-glass-card" style="margin-bottom:14px; border-left:4px solid #3b82f6;">
+            <b>Q: {chat['q']}</b>
+            <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
+            <div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.6;">{chat['a']}</div>
+        </div>
+        """)
 
 # ==============================================================================
-# TAB 6: 📜 TRANSACTION AUDIT LOG MODULE
+# TAB 5: 🧠 INSIGHTS & MAMDANI FUZZY LOGIC MODULE
 # ==============================================================================
-elif nav_choice == "📜 Transaction Audit Log":
-    st.html('<div class="glass-panel"><h2>📜 Transaction Audit Trail & Exporter</h2></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.dataframe(st.session_state.transactions, use_container_width=True)
-    csv = st.session_state.transactions.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Export Audit Ledger CSV", data=csv, file_name="Ledger.csv", mime="text/csv")
+elif nav_choice == "Insights":
+    st.html(f"""
+    <div class="liquid-glass-card" style="margin-bottom:20px;">
+        <h2>🧠 Mamdani Fuzzy Logic Diagnostics</h2>
+        <p style="color:rgba(255,255,255,0.7);">Evaluated Financial Health Rating: <b style="color:#60a5fa;">{fz_score}/100 ({fz_cat})</b></p>
+    </div>
+    """)
 
 # ==============================================================================
-# TAB 7: ⚙️ SETTINGS & PROFILE MODULE
+# TAB 6: ⚙️ SETTINGS MODULE
 # ==============================================================================
-elif nav_choice == "⚙️ Settings & Profile":
-    st.html('<div class="glass-panel"><h2>⚙️ Account Profile & Target Goals</h2></div>')
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.text_input("Name:", value=AUTHOR_NAME)
-    st.selectbox("Currency:", ["INR (₹)", "USD ($)", "EUR (€)"])
-    st.dataframe(st.session_state.financial_goals, use_container_width=True)
-    st.info(f"LangChain Gemini LLM Status: {'Connected ✅' if os.getenv('GOOGLE_API_KEY') else 'Missing API Key ⚠️'}")
+elif nav_choice == "Settings":
+    st.html("""
+    <div class="liquid-glass-card" style="margin-bottom:20px;">
+        <h2>⚙️ User Profile & App Settings</h2>
+    </div>
+    """)
+    st.text_input("Legal Account Owner Name:", value=AUTHOR_NAME)
+    st.selectbox("Operating Currency:", ["INR (₹)", "USD ($)", "EUR (€)"])
 
 # FOOTER
-st.html(f'<div style="text-align:center; padding:30px 0; font-size:11px; color:rgba(255,255,255,0.5);">{APP_NAME} Enterprise Suite v{APP_VERSION} | Powered by Streamlit, Mamdani Engine & LangChain AI</div>')
+st.html("""
+<div style="text-align:center; padding:30px 0 10px 0; font-size:11px; color:rgba(255,255,255,0.5);">
+    Built with Streamlit &nbsp;|&nbsp; Powered by AI & Fuzzy Logic &nbsp;|&nbsp; © 2026 FinWise ❤️
+</div>
+""")
