@@ -167,23 +167,10 @@ if "financial_goals" not in st.session_state:
         }
     ])
 
-if "historical_performance" not in st.session_state:
-    st.session_state.historical_performance = pd.DataFrame([
-        {"Month": "Apr 2026", "Income": 70000.0, "Expenses": 38000.0, "Savings": 15000.0, "Debt": 7000.0, "Score": 71.2},
-        {"Month": "May 2026", "Income": 72000.0, "Expenses": 36000.0, "Savings": 17000.0, "Debt": 7000.0, "Score": 74.8},
-        {"Month": "Jun 2026", "Income": 72000.0, "Expenses": 41000.0, "Savings": 12000.0, "Debt": 7000.0, "Score": 66.5},
-        {"Month": "Jul 2026", "Income": 75000.0, "Expenses": 35000.0, "Savings": 19000.0, "Debt": 6500.0, "Score": 80.4},
-        {"Month": "Aug 2026", "Income": 75000.0, "Expenses": 34000.0, "Savings": 21000.0, "Debt": 6500.0, "Score": 83.9},
-        {"Month": "Sep 2026", "Income": 85000.0, "Expenses": 37000.0, "Savings": 23000.0, "Debt": 6500.0, "Score": 85.2}
-    ])
-
 # ==============================================================================
 # SECTION 3: MAMDANI FUZZY LOGIC MATHEMATICAL ENGINE
 # ==============================================================================
 def trimf(x, a, b, c):
-    """
-    Evaluates Triangular Membership Function value at x given vertices a <= b <= c.
-    """
     if x <= a or x >= c:
         return 0.0
     if a < x <= b:
@@ -193,9 +180,6 @@ def trimf(x, a, b, c):
     return 0.0
 
 def trapmf(x, a, b, c, d):
-    """
-    Evaluates Trapezoidal Membership Function value at x given vertices a <= b <= c <= d.
-    """
     if x <= a or x >= d:
         return 0.0
     if a <= x <= b:
@@ -207,26 +191,18 @@ def trapmf(x, a, b, c, d):
     return 0.0
 
 def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
-    """
-    Full Mamdani Fuzzy Inference Engine implementing Membership Function Degree Calculation,
-    Fuzzy Rule Base Inference, Aggregation, and Centroid Defuzzification.
-    """
-    # 1. FUZZIFICATION: Expense Ratio Sets
     exp_low = trapmf(exp_ratio, 0.0, 0.0, 30.0, 50.0)
     exp_med = trimf(exp_ratio, 40.0, 55.0, 70.0)
     exp_high = trapmf(exp_ratio, 60.0, 80.0, 100.0, 100.0)
 
-    # 2. FUZZIFICATION: Savings Ratio Sets
     sav_poor = trapmf(sav_ratio, 0.0, 0.0, 10.0, 20.0)
     sav_mod = trimf(sav_ratio, 15.0, 25.0, 35.0)
     sav_good = trapmf(sav_ratio, 30.0, 45.0, 100.0, 100.0)
 
-    # 3. FUZZIFICATION: Debt Ratio Sets
     dbt_low = trapmf(dbt_ratio, 0.0, 0.0, 15.0, 30.0)
     dbt_med = trimf(dbt_ratio, 20.0, 35.0, 50.0)
     dbt_high = trapmf(dbt_ratio, 40.0, 60.0, 100.0, 100.0)
 
-    # 4. RULE BASE INFERENCE (Mamdani Min Operator)
     rules = {
         "Poor": 0.0,
         "Fair": 0.0,
@@ -234,35 +210,27 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
         "Excellent": 0.0
     }
 
-    # Rule 1: IF Expense is Low AND Savings is Good AND Debt is Low THEN Health is Excellent
     r1 = min(exp_low, sav_good, dbt_low)
     rules["Excellent"] = max(rules["Excellent"], r1)
 
-    # Rule 2: IF Expense is Medium AND Savings is Moderate AND Debt is Low THEN Health is Good
     r2 = min(exp_med, sav_mod, dbt_low)
     rules["Good"] = max(rules["Good"], r2)
 
-    # Rule 3: IF Expense is High OR Debt is High THEN Health is Poor
     r3 = max(exp_high, dbt_high)
     rules["Poor"] = max(rules["Poor"], r3)
 
-    # Rule 4: IF Expense is Medium AND Savings is Poor THEN Health is Fair
     r4 = min(exp_med, sav_poor)
     rules["Fair"] = max(rules["Fair"], r4)
 
-    # Rule 5: IF Savings is Good AND Debt is Medium THEN Health is Good
     r5 = min(sav_good, dbt_med)
     rules["Good"] = max(rules["Good"], r5)
 
-    # Rule 6: IF Expense is Low AND Savings is Moderate THEN Health is Good
     r6 = min(exp_low, sav_mod)
     rules["Good"] = max(rules["Good"], r6)
 
-    # Rule 7: IF Debt is High AND Savings is Poor THEN Health is Poor
     r7 = min(dbt_high, sav_poor)
     rules["Poor"] = max(rules["Poor"], r7)
 
-    # 5. AGGREGATION & CENTROID DEFUZZIFICATION
     x_grid = np.linspace(0.0, 100.0, 101)
     aggregated = np.zeros_like(x_grid)
 
@@ -297,9 +265,6 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
 # SECTION 4: LANGCHAIN & GEMINI LLM INTEGRATION MODULE
 # ==============================================================================
 def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
-    """
-    Connects to Google Gemini LLM via LangChain to generate contextual wealth management reports.
-    """
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return f"""
@@ -334,11 +299,7 @@ Client Financial Snapshot:
 
 Client Inquiry / Goal: "{query}"
 
-Provide a structured, executive financial advisory report covering:
-1. **Executive Evaluation:** Why the client received a Mamdani Fuzzy score of {score}/100 ({cat}).
-2. **Vulnerability Assessment:** Highlight risks regarding discretionary leakages or debt service.
-3. **Strategic Action Roadmap:** 3 actionable, prioritized financial steps for liquidity optimization and growth.
-Format using clean, modern Markdown formatting.
+Provide a structured, executive financial advisory report.
 """
         prompt = PromptTemplate(
             input_variables=["inc", "exp", "sav", "dbt", "score", "cat", "query"],
@@ -360,7 +321,7 @@ Format using clean, modern Markdown formatting.
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments."
 
 # ==============================================================================
-# SECTION 5: HIGH-END IOS GLASSMORPHISM CSS STYLING ENGINE (UPDATED & PERFECTED)
+# SECTION 5: FUTURISTIC IOS LIQUID GLASS CSS ENGINE
 # ==============================================================================
 st.markdown("""
 <style>
@@ -382,86 +343,32 @@ st.markdown("""
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1440px; }
 
-/* iOS Glass Cards with Smooth Hover Glow Effects */
+/* iOS Liquid Glass Card Styling */
 .glass-panel, .top-metric-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
     backdrop-filter: blur(40px) saturate(200%) !important;
     -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-    border-radius: 22px !important;
+    border-radius: 24px !important;
     padding: 24px;
 }
 
-.glass-panel:hover, .top-metric-card:hover {
-    transform: translateY(-4px) scale(1.008);
-    box-shadow: 0 30px 60px rgba(37, 99, 235, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
 .metric-badge {
-    width: 44px; height: 44px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    width: 46px; height: 46px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
     margin-bottom: 12px;
 }
 
-.bg-green {
-    background: rgba(16, 185, 129, 0.25);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.4);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-}
+.bg-green { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+.bg-pink { background: rgba(244, 63, 94, 0.25); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); box-shadow: 0 0 20px rgba(244, 63, 94, 0.3); }
+.bg-blue { background: rgba(59, 130, 246, 0.25); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+.bg-purple { background: rgba(139, 92, 246, 0.25); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
 
-.bg-pink {
-    background: rgba(244, 63, 94, 0.25);
-    color: #fb7185;
-    border: 1px solid rgba(244, 63, 94, 0.4);
-    box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
-}
+.top-metric-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+.top-metric-val { font-size: 28px; font-weight: 800; color: #ffffff; margin: 4px 0 2px 0; }
 
-.bg-blue {
-    background: rgba(59, 130, 246, 0.25);
-    color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.4);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.bg-purple {
-    background: rgba(139, 92, 246, 0.25);
-    color: #c084fc;
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-}
-
-.top-metric-label {
-    font-size: 11px;
-    color: rgba(255,255,255,0.7);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.top-metric-val {
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff;
-    margin: 4px 0 2px 0;
-}
-
-.stNumberInput input, .stTextInput input, .stSelectbox select, .stDateInput input, .stTextArea textarea {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 14px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-}
-
-.stNumberInput input:focus, .stTextInput input:focus {
-    border-color: #60a5fa !important;
-    box-shadow: 0 0 20px rgba(96, 165, 250, 0.5) !important;
-}
-
-/* FIX SIDEBAR NAVIGATION RADIO BUTTON CIRCLES & STYLING */
+/* FIX SIDEBAR NAVIGATION RADIO BUTTON CIRCLES */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%) !important;
     backdrop-filter: blur(40px) saturate(200%) !important;
@@ -469,9 +376,7 @@ st.markdown("""
 }
 
 div[data-testid="stRadio"] > label { display: none !important; }
-div[data-testid="stRadio"] div[role="radiogroup"] {
-    gap: 12px !important;
-}
+div[data-testid="stRadio"] div[role="radiogroup"] { gap: 10px !important; }
 div[data-testid="stRadio"] div[role="radiogroup"] label {
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
@@ -488,35 +393,93 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
     border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* Strictly hide radio circles and SVG icons */
 div[data-testid="stRadio"] div[role="radiogroup"] label input[type="radio"],
 div[data-testid="stRadio"] div[role="radiogroup"] label div[data-aria-hidden="true"],
 div[data-testid="stRadio"] div[role="radiogroup"] label svg {
     display: none !important;
 }
 
-/* FIX VEGA-LITE / NATIVE STREAMLIT CHART CONTAINER BLOCK BACKGROUND */
-[data-testid="stVegaLiteChart"] {
-    background: transparent !important;
-    border-radius: 18px !important;
-    padding: 10px !important;
+/* HIGH-END FUTURISTIC LIQUID GLASS GRAPH CSS */
+.ios-chart-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 28px;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    margin-top: 15px;
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-row {
+    margin-bottom: 20px;
+}
+
+.chart-label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.chart-track {
+    width: 100%;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 30px;
+    overflow: hidden;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-fill {
+    height: 100%;
+    border-radius: 30px;
+    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fill-income {
+    background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+}
+
+.fill-expense {
+    background: linear-gradient(90deg, #f43f5e 0%, #fb7185 100%);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
+}
+
+.fill-investment {
+    background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+.fill-debt {
+    background: linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
 }
 
 .stButton > button {
-    width: 100%;
-    border-radius: 16px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #ffffff;
+    width: 100%; border-radius: 16px; padding: 16px; font-size: 16px; font-weight: 700; color: #ffffff;
     background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: 0 0 30px rgba(37, 99, 235, 0.6) !important;
-}
-
-.stButton > button:hover {
-    transform: translateY(-2px) scale(1.01) !important;
-    box-shadow: 0 0 40px rgba(124, 58, 237, 0.8) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -563,15 +526,14 @@ with st.sidebar:
     </div>
     """)
 
-# COMPUTATION OF REAL-TIME AGGREGATES FROM SESSION STATE LEDGER
+# COMPUTATION
 df_trans = st.session_state.transactions
 inc_tot = df_trans[df_trans["Type"] == "Income"]["Amount"].sum()
 exp_tot = df_trans[df_trans["Type"] == "Expense"]["Amount"].sum()
 inv_tot = df_trans[df_trans["Type"] == "Investment"]["Amount"].sum()
 dbt_tot = df_trans[df_trans["Type"] == "Debt"]["Amount"].sum()
 
-if inc_tot == 0.0:
-    inc_tot = 1.0  # Safe fallback for division
+if inc_tot == 0.0: inc_tot = 1.0
 
 exp_ratio = min((exp_tot / inc_tot) * 100.0, 100.0)
 sav_ratio = min((inv_tot / inc_tot) * 100.0, 100.0)
@@ -601,24 +563,66 @@ if nav_choice == "📊 Executive Dashboard":
 
     st.markdown("<br>", unsafe_allow_html=True)
     m1, m2, m3, m4 = st.columns(4)
-    with m1:
-        st.html(f'<div class="top-metric-card"><div class="metric-badge bg-green">💼</div><div class="top-metric-label">Total Monthly Income</div><div class="top-metric-val">₹{inc_tot:,.2f}</div></div>')
-    with m2:
-        st.html(f'<div class="top-metric-card"><div class="metric-badge bg-pink">💳</div><div class="top-metric-label">Total Expenses</div><div class="top-metric-val">₹{exp_tot:,.2f}</div></div>')
-    with m3:
-        st.html(f'<div class="top-metric-card"><div class="metric-badge bg-blue">📈</div><div class="top-metric-label">Investments & SIPs</div><div class="top-metric-val">₹{inv_tot:,.2f}</div></div>')
-    with m4:
-        st.html(f'<div class="top-metric-card"><div class="metric-badge bg-purple">🏦</div><div class="top-metric-label">Debt Obligations</div><div class="top-metric-val">₹{dbt_tot:,.2f}</div></div>')
+    with m1: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-green">💼</div><div class="top-metric-label">Total Monthly Income</div><div class="top-metric-val">₹{inc_tot:,.2f}</div></div>')
+    with m2: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-pink">💳</div><div class="top-metric-label">Total Expenses</div><div class="top-metric-val">₹{exp_tot:,.2f}</div></div>')
+    with m3: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-blue">📈</div><div class="top-metric-label">Investments & SIPs</div><div class="top-metric-val">₹{inv_tot:,.2f}</div></div>')
+    with m4: st.html(f'<div class="top-metric-card"><div class="metric-badge bg-purple">🏦</div><div class="top-metric-label">Debt Obligations</div><div class="top-metric-val">₹{dbt_tot:,.2f}</div></div>')
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.html("<div style='font-size:18px; font-weight:700; margin-bottom:12px;'>📊 Monthly Cashflow Breakdown</div>")
+    # HIGH-END FUTURISTIC LIQUID GLASS GRAPH
+    max_val = max(inc_tot, exp_tot, inv_tot, dbt_tot, 1.0)
+    inc_pct = (inc_tot / max_val) * 100
+    exp_pct = (exp_tot / max_val) * 100
+    inv_pct = (inv_tot / max_val) * 100
+    dbt_pct = (dbt_tot / max_val) * 100
 
-    chart_df = pd.DataFrame({
-        "Financial Metric": ["Debt", "Expenses", "Income", "Investments"],
-        "Amount (₹)": [dbt_tot, exp_tot, inc_tot, inv_tot]
-    }).set_index("Financial Metric")
-    
-    st.bar_chart(chart_df)
+    st.html(f"""
+    <div class="ios-chart-card">
+        <div class="chart-header">
+            <div class="chart-title">📊 Monthly Liquid Cashflow Analytics</div>
+            <div style="font-size:12px; color:#34d399; font-weight:700;">● Live Ledger Synced</div>
+        </div>
+        
+        <div class="chart-row">
+            <div class="chart-label-group">
+                <span style="color:#34d399;">💼 Income</span>
+                <span>₹{inc_tot:,.2f} ({inc_pct:.1f}%)</span>
+            </div>
+            <div class="chart-track">
+                <div class="chart-fill fill-income" style="width: {inc_pct}%;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-label-group">
+                <span style="color:#fb7185;">💳 Expenses</span>
+                <span>₹{exp_tot:,.2f} ({exp_pct:.1f}%)</span>
+            </div>
+            <div class="chart-track">
+                <div class="chart-fill fill-expense" style="width: {exp_pct}%;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-label-group">
+                <span style="color:#60a5fa;">📈 Investments</span>
+                <span>₹{inv_tot:,.2f} ({inv_pct:.1f}%)</span>
+            </div>
+            <div class="chart-track">
+                <div class="chart-fill fill-investment" style="width: {inv_pct}%;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-label-group">
+                <span style="color:#c084fc;">🏦 Debt Obligations</span>
+                <span>₹{dbt_tot:,.2f} ({dbt_pct:.1f}%)</span>
+            </div>
+            <div class="chart-track">
+                <div class="chart-fill fill-debt" style="width: {dbt_pct}%;"></div>
+            </div>
+        </div>
+    </div>
+    """)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.html("<div style='font-size:18px; font-weight:700;'>🤖 AI-Generated Executive Advisory Report</div>")
@@ -632,119 +636,52 @@ if nav_choice == "📊 Executive Dashboard":
 # TAB 2: 💳 EXPENSE & INCOME MANAGER MODULE
 # ==============================================================================
 elif nav_choice == "💳 Expense & Income Manager":
-    st.html("""
-    <div class="glass-panel">
-        <h2>💳 Transaction & Cashflow Ledger</h2>
-        <p style="color:rgba(255,255,255,0.7);">Record and manage individual transactions to continuously update Mamdani Fuzzy Metrics.</p>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>💳 Transaction & Cashflow Ledger</h2><p style="color:rgba(255,255,255,0.7);">Record transactions to update metrics real-time.</p></div>')
     st.markdown("<br>", unsafe_allow_html=True)
 
-    st.html("<div style='font-size:16px; font-weight:700; margin-bottom:10px;'>➕ Record New Financial Transaction</div>")
     t_c1, t_c2, t_c3, t_c4, t_c5 = st.columns([2, 2, 2, 2, 3])
-    with t_c1:
-        t_date = st.date_input("Date", datetime.date.today())
-    with t_c2:
-        t_type = st.selectbox("Transaction Type", ["Income", "Expense", "Investment", "Debt"])
-    with t_c3:
-        t_cat = st.text_input("Category", value="General Outflow")
-    with t_c4:
-        t_amt = st.number_input("Amount (₹)", min_value=1.0, value=2500.0, step=500.0)
-    with t_c5:
-        t_note = st.text_input("Note / Memo", value="Transaction Details")
+    with t_c1: t_date = st.date_input("Date", datetime.date.today())
+    with t_c2: t_type = st.selectbox("Type", ["Income", "Expense", "Investment", "Debt"])
+    with t_c3: t_cat = st.text_input("Category", value="General Outflow")
+    with t_c4: t_amt = st.number_input("Amount (₹)", min_value=1.0, value=2500.0, step=500.0)
+    with t_c5: t_note = st.text_input("Note", value="Details")
 
     if st.button("➕ Record Transaction To Ledger"):
         new_id = f"TXN-{len(st.session_state.transactions) + 8001}"
-        new_row = pd.DataFrame([{
-            "ID": new_id,
-            "Date": str(t_date),
-            "Category": t_cat,
-            "Type": t_type,
-            "Amount": float(t_amt),
-            "Method": "Manual App Entry",
-            "Status": "Cleared",
-            "Note": t_note
-        }])
+        new_row = pd.DataFrame([{"ID": new_id, "Date": str(t_date), "Category": t_cat, "Type": t_type, "Amount": float(t_amt), "Method": "Manual Entry", "Status": "Cleared", "Note": t_note}])
         st.session_state.transactions = pd.concat([st.session_state.transactions, new_row], ignore_index=True)
         st.success(f"Transaction {new_id} Successfully Recorded!")
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.html("<div style='font-size:16px; font-weight:700; margin-bottom:10px;'>📋 Live System Ledger</div>")
     st.dataframe(st.session_state.transactions, use_container_width=True)
 
 # ==============================================================================
 # TAB 3: 🧠 MAMDANI FUZZY ANALYTICS MODULE
 # ==============================================================================
 elif nav_choice == "🧠 Mamdani Fuzzy Analytics":
-    st.html("""
-    <div class="glass-panel">
-        <h2>🧠 Mamdani Fuzzy Inference Engine Diagnostics</h2>
-        <p style="color:rgba(255,255,255,0.7);">Mathematical membership function degrees ($\mu$) for Expense, Savings, and Debt ratios.</p>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>🧠 Mamdani Fuzzy Inference Engine Diagnostics</h2><p style="color:rgba(255,255,255,0.7);">Membership degree ($\mu$) evaluation.</p></div>')
     st.markdown("<br>", unsafe_allow_html=True)
 
     fc1, fc2, fc3 = st.columns(3)
-    with fc1:
-        st.html(f"""
-        <div class="glass-panel">
-            <h4>Expense Ratio ({exp_ratio:.1f}%)</h4>
-            <p>• Low Set ($\mu$): <b>{fz_mems['exp']['Low']:.2f}</b></p>
-            <p>• Medium Set ($\mu$): <b>{fz_mems['exp']['Med']:.2f}</b></p>
-            <p>• High Set ($\mu$): <b>{fz_mems['exp']['High']:.2f}</b></p>
-        </div>
-        """)
-    with fc2:
-        st.html(f"""
-        <div class="glass-panel">
-            <h4>Savings Ratio ({sav_ratio:.1f}%)</h4>
-            <p>• Poor Set ($\mu$): <b>{fz_mems['sav']['Poor']:.2f}</b></p>
-            <p>• Moderate Set ($\mu$): <b>{fz_mems['sav']['Mod']:.2f}</b></p>
-            <p>• Good Set ($\mu$): <b>{fz_mems['sav']['Good']:.2f}</b></p>
-        </div>
-        """)
-    with fc3:
-        st.html(f"""
-        <div class="glass-panel">
-            <h4>Debt Ratio ({dbt_ratio:.1f}%)</h4>
-            <p>• Low Set ($\mu$): <b>{fz_mems['dbt']['Low']:.2f}</b></p>
-            <p>• Medium Set ($\mu$): <b>{fz_mems['dbt']['Med']:.2f}</b></p>
-            <p>• High Set ($\mu$): <b>{fz_mems['dbt']['High']:.2f}</b></p>
-        </div>
-        """)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.html("<div style='font-size:18px; font-weight:700;'>🔥 Rule Base Activation Strengths</div>")
-    rule_df = pd.DataFrame({
-        "Rule Consequent": list(fz_rules.keys()),
-        "Firing Strength": list(fz_rules.values())
-    }).set_index("Rule Consequent")
-    st.bar_chart(rule_df)
+    with fc1: st.html(f'<div class="glass-panel"><h4>Expense Ratio ({exp_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["exp"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["exp"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["exp"]["High"]:.2f}</b></p></div>')
+    with fc2: st.html(f'<div class="glass-panel"><h4>Savings Ratio ({sav_ratio:.1f}%)</h4><p>• Poor: <b>{fz_mems["sav"]["Poor"]:.2f}</b></p><p>• Moderate: <b>{fz_mems["sav"]["Mod"]:.2f}</b></p><p>• Good: <b>{fz_mems["sav"]["Good"]:.2f}</b></p></div>')
+    with fc3: st.html(f'<div class="glass-panel"><h4>Debt Ratio ({dbt_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["dbt"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["dbt"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["dbt"]["High"]:.2f}</b></p></div>')
 
 # ==============================================================================
 # TAB 4: 🔮 WEALTH PREDICTIONS & SIP MODULE
 # ==============================================================================
 elif nav_choice == "🔮 Wealth Predictions & SIP":
-    st.html("""
-    <div class="glass-panel">
-        <h2>🔮 Wealth Growth & Compound Investment Simulator</h2>
-        <p style="color:rgba(255,255,255,0.7);">Project long-term portfolio growth using monthly compounding models.</p>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>🔮 Wealth Growth & Compound Investment Simulator</h2></div>')
     st.markdown("<br>", unsafe_allow_html=True)
 
     pc1, pc2, pc3 = st.columns(3)
-    with pc1:
-        sip_amt = st.number_input("Monthly SIP Contribution (₹)", value=inv_tot if inv_tot > 0.0 else 18000.0, step=1000.0)
-    with pc2:
-        rate = st.slider("Expected Annual Return CAGR (%)", 1.0, 25.0, 12.0)
-    with pc3:
-        years = st.slider("Investment Horizon (Years)", 1, 30, 10)
+    with pc1: sip_amt = st.number_input("Monthly SIP (₹)", value=inv_tot if inv_tot > 0.0 else 18000.0, step=1000.0)
+    with pc2: rate = st.slider("Expected Return (%)", 1.0, 25.0, 12.0)
+    with pc3: years = st.slider("Horizon (Years)", 1, 30, 10)
 
     m_count = years * 12
     r_monthly = (rate / 100.0) / 12.0
-    timeline = []
-    curr = 0.0
+    timeline, curr = [], 0.0
     for m in range(1, m_count + 1):
         curr = (curr + sip_amt) * (1.0 + r_monthly)
         timeline.append(curr)
@@ -757,70 +694,38 @@ elif nav_choice == "🔮 Wealth Predictions & SIP":
 # TAB 5: ✨ AI COPILOT ADVISOR MODULE
 # ==============================================================================
 elif nav_choice == "✨ AI Copilot Advisor":
-    st.html("""
-    <div class="glass-panel">
-        <h2>✨ FinWise Conversational AI Copilot</h2>
-        <p style="color:rgba(255,255,255,0.7);">Ask specific wealth management, tax optimization, and investment strategy questions.</p>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>✨ FinWise Conversational AI Copilot</h2></div>')
     st.markdown("<br>", unsafe_allow_html=True)
 
-    user_q = st.text_area("Your Financial Inquiry:", value="How can I optimize tax planning while building my long-term retirement corpus?")
+    user_q = st.text_area("Your Inquiry:", value="How can I optimize tax planning while building my retirement corpus?")
     if st.button("💬 Ask AI Copilot"):
-        with st.spinner("Analyzing profile and generating strategy..."):
+        with st.spinner("Analyzing profile..."):
             ans = get_ai_advice(user_q, inc_tot, exp_tot, inv_tot, dbt_tot, fz_score, fz_cat)
             st.session_state.chat_history.append({"q": user_q, "a": ans})
 
     for chat in reversed(st.session_state.chat_history):
-        st.html(f"""
-        <div class="glass-panel" style="margin-bottom:14px;">
-            <b>Q: {chat['q']}</b>
-            <hr style="border-color:rgba(255,255,255,0.1);">
-            <div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.6;">{chat['a']}</div>
-        </div>
-        """)
+        st.html(f'<div class="glass-panel" style="margin-bottom:14px;"><b>Q: {chat["q"]}</b><hr><div>{chat["a"]}</div></div>')
 
 # ==============================================================================
 # TAB 6: 📜 TRANSACTION AUDIT LOG MODULE
 # ==============================================================================
 elif nav_choice == "📜 Transaction Audit Log":
-    st.html("""
-    <div class="glass-panel">
-        <h2>📜 Transaction Audit Trail & Exporter</h2>
-        <p style="color:rgba(255,255,255,0.7);">Inspect complete historical records and download official CSV ledger exports.</p>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>📜 Transaction Audit Trail & Exporter</h2></div>')
     st.markdown("<br>", unsafe_allow_html=True)
     st.dataframe(st.session_state.transactions, use_container_width=True)
-
     csv = st.session_state.transactions.to_csv(index=False).encode("utf-8")
-    st.download_button("📥 Export Audit Ledger CSV", data=csv, file_name=f"FinWise_Ledger_{datetime.date.today()}.csv", mime="text/csv")
+    st.download_button("📥 Export Audit Ledger CSV", data=csv, file_name="Ledger.csv", mime="text/csv")
 
 # ==============================================================================
 # TAB 7: ⚙️ SETTINGS & PROFILE MODULE
 # ==============================================================================
 elif nav_choice == "⚙️ Settings & Profile":
-    st.html("""
-    <div class="glass-panel">
-        <h2>⚙️ Account Profile & Target Financial Goals</h2>
-    </div>
-    """)
+    st.html('<div class="glass-panel"><h2>⚙️ Account Profile & Target Goals</h2></div>')
     st.markdown("<br>", unsafe_allow_html=True)
-
-    st.text_input("Legal Account Owner Name:", value=AUTHOR_NAME)
-    st.selectbox("Base Operating Currency:", ["INR (₹)", "USD ($)", "EUR (€)"])
-
-    st.markdown("### 🎯 Target Financial Goals")
+    st.text_input("Name:", value=AUTHOR_NAME)
+    st.selectbox("Currency:", ["INR (₹)", "USD ($)", "EUR (€)"])
     st.dataframe(st.session_state.financial_goals, use_container_width=True)
+    st.info(f"LangChain Gemini LLM Status: {'Connected ✅' if os.getenv('GOOGLE_API_KEY') else 'Missing API Key ⚠️'}")
 
-    api_status = "Connected ✅" if os.getenv("GOOGLE_API_KEY") else "Missing Key (Using Rule Engine) ⚠️"
-    st.info(f"LangChain Gemini LLM Connection Status: {api_status}")
-
-# ==============================================================================
-# SECTION 7: SYSTEM FOOTER
-# ==============================================================================
-st.html(f"""
-<div style="text-align:center; padding:30px 0 10px 0; font-size:11px; color:rgba(255,255,255,0.5);">
-    {APP_NAME} Enterprise Suite v{APP_VERSION} ({APP_BUILD}) &nbsp;|&nbsp; Developed for Assessment &nbsp;|&nbsp; Powered by Streamlit, Mamdani Fuzzy Engine & LangChain AI ❤️
-</div>
-""")
+# FOOTER
+st.html(f'<div style="text-align:center; padding:30px 0; font-size:11px; color:rgba(255,255,255,0.5);">{APP_NAME} Enterprise Suite v{APP_VERSION} | Powered by Streamlit, Mamdani Engine & LangChain AI</div>')
