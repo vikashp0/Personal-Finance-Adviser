@@ -382,23 +382,23 @@ div[data-testid="stForm"] {
 }
 
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: rgba(15, 23, 42, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
     border-radius: 14px !important;
-    color: #0f172a !important;
+    color: #ffffff !important;
     backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
 }
 
 .stNumberInput button {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: #0f172a !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: #0f172a !important;
+    color: #ffffff !important;
     background: transparent !important;
     font-weight: 800 !important;
 }
