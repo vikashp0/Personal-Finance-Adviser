@@ -381,25 +381,25 @@ div[data-testid="stForm"] {
     width: 100% !important;
 }
 
-/* DYNAMIC THEME-AWARE INPUT STYLING (WORKS PERFECTLY IN BOTH LIGHT & DARK MODES) */
+/* HIGH-CONTRAST LOCKED INPUT STYLING (WHITE TEXT ON DARK GLASS BACKGROUND) */
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: color-mix(in srgb, var(--background-color, #ffffff) 85%, #3b82f6 15%) !important;
-    border: 1px solid rgba(125, 125, 125, 0.4) !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 14px !important;
-    color: var(--text-color, #0f172a) !important;
+    color: #ffffff !important;
     backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .stNumberInput button {
-    background: rgba(125, 125, 125, 0.2) !important;
-    border: 1px solid rgba(125, 125, 125, 0.4) !important;
-    color: var(--text-color, #0f172a) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: var(--text-color, #0f172a) !important;
+    color: #ffffff !important;
     background: transparent !important;
     font-weight: 800 !important;
 }
