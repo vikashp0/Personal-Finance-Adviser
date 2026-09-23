@@ -338,7 +338,7 @@ Provide a structured, executive financial advisory report with clear, actionable
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments. Error: {str(e)}"
 
 # ==============================================================================
-# SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE (WITH FIXED GLASS INPUTS)
+# SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE (THEME RESILIENT)
 # ==============================================================================
 st.markdown("""
 <style>
@@ -381,27 +381,27 @@ div[data-testid="stForm"] {
     width: 100% !important;
 }
 
-/* LIQUID GLASS INPUT FIELDS & SELECTORS */
+/* LIQUID GLASS INPUT FIELDS & SELECTORS (THEME RESILIENT: LIGHT & DARK SAFE) */
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
     border-radius: 14px !important;
-    color: #ffffff !important;
+    color: #0f172a !important;
     backdrop-filter: blur(30px) saturate(200%) !important;
     -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.4) !important;
 }
 
 .stNumberInput button {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
-    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #0f172a !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
     background: transparent !important;
     font-weight: 800 !important;
 }
