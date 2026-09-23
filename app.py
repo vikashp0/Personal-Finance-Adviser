@@ -9,7 +9,6 @@ import streamlit as st
 # ==============================================================================
 # SECTION 1: SYSTEM & STREAMLIT PAGE CONFIGURATION
 # ==============================================================================
-
 st.set_page_config(
     page_title="FinWise Pro - Enterprise iOS Glass Adviser",
     page_icon="💎",
@@ -17,22 +16,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Application Metadata Constants & Versioning Information
 APP_NAME = "FinWise Pro"
 APP_VERSION = "2026.4.0"
 APP_BUILD = "Build-8921-Enterprise"
 AUTHOR_NAME = "Vikas Ramsevak Pal"
 PLATFORM_TAG = "iOS Liquid Glass Enterprise Suite"
 
-
 # ==============================================================================
 # SECTION 2: APPLICATION STATE & DATABASE INITIALIZATION SIMULATION
 # ==============================================================================
-
 if "app_initialized" not in st.session_state:
     st.session_state.app_initialized = True
-    st.session_state.init_timestamp = datetime.datetime.now().strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    st.session_state.init_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 if "income" not in st.session_state:
     st.session_state.income = 70000.0
@@ -184,45 +180,33 @@ if "financial_goals" not in st.session_state:
         }
     ])
 
-
 # ==============================================================================
 # SECTION 3: MAMDANI FUZZY LOGIC MATHEMATICAL ENGINE
 # ==============================================================================
-
 def trimf(x, a, b, c):
-    """Triangular Membership Function for Fuzzy Sets."""
+    """Triangular Membership Function for Fuzzy Sets"""
     if x <= a or x >= c:
         return 0.0
-
     if a < x <= b:
         return (x - a) / (b - a) if b != a else 1.0
-
     if b < x < c:
         return (c - x) / (c - b) if c != b else 1.0
-
     return 0.0
-
 
 def trapmf(x, a, b, c, d):
-    """Trapezoidal Membership Function for Fuzzy Sets."""
+    """Trapezoidal Membership Function for Fuzzy Sets"""
     if x <= a or x >= d:
         return 0.0
-
     if a <= x <= b:
         return (x - a) / (b - a) if b != a else 1.0
-
     if b <= x <= c:
         return 1.0
-
     if c <= x <= d:
         return (d - x) / (d - c) if d != c else 1.0
-
     return 0.0
 
-
 def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
-    """Computes Mamdani Fuzzy Inference Engine Score and Category."""
-
+    """Computes Mamdani Fuzzy Inference Engine Score and Category with Rule Base."""
     exp_low = trapmf(exp_ratio, 0.0, 0.0, 30.0, 50.0)
     exp_med = trimf(exp_ratio, 40.0, 55.0, 70.0)
     exp_high = trapmf(exp_ratio, 60.0, 80.0, 100.0, 100.0)
@@ -267,41 +251,14 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
     aggregated = np.zeros_like(x_grid)
 
     for i, x in enumerate(x_grid):
-
-        p_val = min(
-            rules["Poor"],
-            trapmf(x, 0.0, 0.0, 20.0, 40.0)
-        )
-
-        f_val = min(
-            rules["Fair"],
-            trimf(x, 30.0, 50.0, 70.0)
-        )
-
-        g_val = min(
-            rules["Good"],
-            trimf(x, 60.0, 75.0, 90.0)
-        )
-
-        e_val = min(
-            rules["Excellent"],
-            trapmf(x, 80.0, 90.0, 100.0, 100.0)
-        )
-
-        aggregated[i] = max(
-            p_val,
-            f_val,
-            g_val,
-            e_val
-        )
+        p_val = min(rules["Poor"], trapmf(x, 0.0, 0.0, 20.0, 40.0))
+        f_val = min(rules["Fair"], trimf(x, 30.0, 50.0, 70.0))
+        g_val = min(rules["Good"], trimf(x, 60.0, 75.0, 90.0))
+        e_val = min(rules["Excellent"], trapmf(x, 80.0, 90.0, 100.0, 100.0))
+        aggregated[i] = max(p_val, f_val, g_val, e_val)
 
     sum_agg = np.sum(aggregated)
-
-    score = (
-        float(np.sum(x_grid * aggregated) / sum_agg)
-        if sum_agg != 0.0
-        else 50.0
-    )
+    score = float(np.sum(x_grid * aggregated) / sum_agg) if sum_agg != 0.0 else 50.0
 
     if score >= 80.0:
         category = "Excellent"
@@ -313,68 +270,32 @@ def evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio):
         category = "Poor"
 
     membership_details = {
-        "exp": {
-            "Low": exp_low,
-            "Med": exp_med,
-            "High": exp_high
-        },
-        "sav": {
-            "Poor": sav_poor,
-            "Mod": sav_mod,
-            "Good": sav_good
-        },
-        "dbt": {
-            "Low": dbt_low,
-            "Med": dbt_med,
-            "High": dbt_high
-        }
+        "exp": {"Low": exp_low, "Med": exp_med, "High": exp_high},
+        "sav": {"Poor": sav_poor, "Mod": sav_mod, "Good": sav_good},
+        "dbt": {"Low": dbt_low, "Med": dbt_med, "High": dbt_high}
     }
 
-    return (
-        round(score, 1),
-        category,
-        rules,
-        membership_details
-    )
-
+    return round(score, 1), category, rules, membership_details
 
 # ==============================================================================
-# SECTION 4: LANGCHAIN & GEMINI LLM INTEGRATION
+# SECTION 4: LANGCHAIN & GEMINI LLM INTEGRATION MODULE
 # ==============================================================================
-
-def get_ai_advice(
-    query,
-    inc,
-    exp,
-    sav,
-    dbt,
-    score,
-    cat
-):
-    """Interfaces with LangChain and Google Gemini."""
-
+def get_ai_advice(query, inc, exp, sav, dbt, score, cat):
+    """Interfaces with LangChain and Google GenAI Gemini-2.5-flash for advisory."""
     api_key = os.getenv("GOOGLE_API_KEY")
-
     if not api_key:
-
         return f"""
 ### 📊 FinWise Automated Health Assessment
-
 * **Mamdani Fuzzy Rating:** **{score}/100 ({cat})**
-* **Monthly Income:** ₹{inc:,.2f}
-* **Monthly Expenses:** ₹{exp:,.2f}
-* **Investments/Savings:** ₹{sav:,.2f}
-* **Debt Obligations:** ₹{dbt:,.2f}
+* **Monthly Income:** ₹{inc:,.2f} | **Expenses:** ₹{exp:,.2f}
+* **Investments/Savings:** ₹{sav:,.2f} | **Debt Obligations:** ₹{dbt:,.2f}
 
-#### 💡 Executive Advisory Recommendations
-
+#### 💡 Executive Advisory Recommendations:
 1. **Debt Cap Strategy:** Maintain total monthly debt service payments below 30% of total income.
-2. **SIP Acceleration:** Direct at least 20% to 25% of gross income toward systematic investments.
-3. **Emergency Reserves:** Build a liquid emergency cushion covering approximately 6 months of mandatory expenses.
-"""
-
+2. **SIP Acceleration:** Direct at least 20% to 25% of gross income toward equity index funds.
+3. **Emergency Reserves:** Build a liquid cash emergency cushion covering 6 months of mandatory living expenses.
+        """
     try:
-
         from langchain_google_genai import ChatGoogleGenerativeAI
         from langchain_core.prompts import PromptTemplate
 
@@ -385,37 +306,24 @@ def get_ai_advice(
         )
 
         template = """
-You are FinWise Pro AI, an executive financial planning assistant.
-
+You are FinWise Pro AI, an Executive Certified Financial Planner (CFP) and Wealth Adviser.
 Client Financial Snapshot:
-
 - Gross Monthly Income: ₹{inc:,.2f}
 - Monthly Living Expenses: ₹{exp:,.2f}
 - Monthly Investments & Savings: ₹{sav:,.2f}
 - Monthly Debt Obligations: ₹{dbt:,.2f}
 - Calculated Mamdani Fuzzy Health Rating: {score}/100 ({cat})
 
-Client Inquiry / Goal:
-"{query}"
+Client Inquiry / Goal: "{query}"
 
-Provide a structured financial analysis with clear actionable bullet points.
+Provide a structured, executive financial advisory report with clear, actionable bullet points.
 """
-
         prompt = PromptTemplate(
-            input_variables=[
-                "inc",
-                "exp",
-                "sav",
-                "dbt",
-                "score",
-                "cat",
-                "query"
-            ],
+            input_variables=["inc", "exp", "sav", "dbt", "score", "cat", "query"],
             template=template
         )
 
         chain = prompt | llm
-
         res = chain.invoke({
             "inc": inc,
             "exp": exp,
@@ -423,445 +331,170 @@ Provide a structured financial analysis with clear actionable bullet points.
             "dbt": dbt,
             "score": score,
             "cat": cat,
-            "query": query if query else
-            "Provide a comprehensive financial health report"
+            "query": query if query else "Provide a comprehensive financial health and wealth optimization report"
         })
-
         return res.content
-
     except Exception as e:
-
-        return f"""
-### Mamdani Evaluation Score
-
-**{score}/100 ({cat})**
-
-Focus areas:
-
-- Review high-interest debt.
-- Maintain emergency reserves.
-- Continue systematic investments.
-- Monitor monthly expenses.
-
-**AI Integration Error:** {str(e)}
-"""
-
+        return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments. Error: {str(e)}"
 
 # ==============================================================================
 # SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE
 # ==============================================================================
-
-st.markdown(
-    """
+st.markdown("""
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
-html,
-body,
-.stApp,
-[data-testid="stAppViewContainer"],
-.main {
-
+html, body, .stApp, [data-testid="stAppViewContainer"], .main {
     max-width: 100vw !important;
     overflow-x: hidden !important;
     touch-action: pan-y !important;
-
-    font-family:
-        'Plus Jakarta Sans',
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif !important;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-
-/* =========================================================
-   APPLICATION BACKGROUND
-   ========================================================= */
-
 .stApp {
-
-    background:
-        radial-gradient(
-            circle at 12% 15%,
-            rgba(16, 185, 129, 0.28),
-            transparent 40%
-        ),
-
-        radial-gradient(
-            circle at 85% 18%,
-            rgba(139, 92, 246, 0.35),
-            transparent 45%
-        ),
-
-        radial-gradient(
-            circle at 50% 80%,
-            rgba(59, 130, 246, 0.30),
-            transparent 50%
-        ),
-
-        radial-gradient(
-            circle at 80% 85%,
-            rgba(244, 63, 94, 0.20),
-            transparent 45%
-        ),
-
-        linear-gradient(
-            135deg,
-            #050b18 0%,
-            #0a1128 50%,
-            #030712 100%
-        ) !important;
-
+    background: 
+        radial-gradient(circle at 12% 15%, rgba(16, 185, 129, 0.28), transparent 40%),
+        radial-gradient(circle at 85% 18%, rgba(139, 92, 246, 0.35), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.30), transparent 50%),
+        radial-gradient(circle at 80% 85%, rgba(244, 63, 94, 0.20), transparent 45%),
+        linear-gradient(135deg, #050b18 0%, #0a1128 50%, #030712 100%) !important;
     color: #ffffff !important;
 }
 
-
-/* =========================================================
-   HIDE STREAMLIT DEFAULT UI
-   ========================================================= */
-
-#MainMenu,
-footer,
-header {
-    visibility: hidden;
-}
-
-
-/* =========================================================
-   MAIN CONTAINER
-   ========================================================= */
-
-.block-container {
-
-    padding-top: 1rem !important;
-    padding-bottom: 2rem !important;
+#MainMenu, footer, header { visibility: hidden; }
+.block-container { 
+    padding-top: 1rem !important; 
+    padding-bottom: 2rem !important; 
     padding-left: 0.8rem !important;
     padding-right: 0.8rem !important;
-
-    max-width: 100vw !important;
+    max-width: 100vw !important; 
 }
 
-
-/* =========================================================
-   GLASS FORM
-   ========================================================= */
-
 div[data-testid="stForm"] {
-
-    background:
-        rgba(255, 255, 255, 0.05) !important;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.18) !important;
-
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
     border-radius: 20px !important;
-
-    backdrop-filter:
-        blur(40px) saturate(200%) !important;
-
-    -webkit-backdrop-filter:
-        blur(40px) saturate(200%) !important;
-
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
     padding: 20px !important;
-
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.4) !important;
-
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
     width: 100% !important;
 }
 
+.stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 14px !important;
+    color: #0f172a !important;
+    backdrop-filter: blur(30px) !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+}
 
-/* =========================================================
-   IMPORTANT INPUT VISIBILITY FIX
-   ========================================================= */
+.stNumberInput button {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #0f172a !important;
+    border-radius: 10px !important;
+}
 
-/* Labels */
+.stNumberInput input, .stTextInput input, .stTextArea textarea {
+    color: #0f172a !important;
+    background: transparent !important;
+    font-weight: 800 !important;
+}
 
-div[data-testid="stNumberInput"] label,
-div[data-testid="stTextInput"] label,
-div[data-testid="stTextArea"] label,
-div[data-testid="stSelectbox"] label {
-
+div[data-testid="stDataFrame"], div[data-testid="stTable"] {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    padding: 10px !important;
+}
+div[data-testid="stDataFrame"] * {
+    background: transparent !important;
     color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
 
-    -webkit-text-fill-color:
-        #ffffff !important;
+[data-testid="stSidebar"] {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(50px) saturate(210%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
 
-    opacity: 1 !important;
-
+div[data-testid="stRadio"] > label { display: none !important; }
+div[data-testid="stRadio"] div[role="radiogroup"] { gap: 8px !important; }
+div[data-testid="stRadio"] div[role="radiogroup"] label {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 16px !important;
+    padding: 10px 14px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 600 !important;
+    cursor: pointer !important;
+    width: 100% !important;
 }
-
-
-/* Number input outer container */
-
-div[data-testid="stNumberInput"]
-div[data-baseweb="input"] {
-
-    background:
-        #0d1527 !important;
-
-    background-color:
-        #0d1527 !important;
-
-    border:
-        1px solid rgba(255,255,255,0.35) !important;
-
-    border-radius:
-        14px !important;
-
-    color:
-        #ffffff !important;
-
-    box-shadow:
-        none !important;
-}
-
-
-/* Text input */
-
-div[data-testid="stTextInput"]
-div[data-baseweb="input"] {
-
-    background:
-        #0d1527 !important;
-
-    background-color:
-        #0d1527 !important;
-
-    border:
-        1px solid rgba(255,255,255,0.35) !important;
-
-    border-radius:
-        14px !important;
-
-    color:
-        #ffffff !important;
-}
-
-
-/* Text area */
-
-div[data-testid="stTextArea"]
-div[data-baseweb="textarea"] {
-
-    background:
-        #0d1527 !important;
-
-    background-color:
-        #0d1527 !important;
-
-    border:
-        1px solid rgba(255,255,255,0.35) !important;
-
-    border-radius:
-        14px !important;
-
-    color:
-        #ffffff !important;
-}
-
-
-/* Actual input text */
-
-div[data-testid="stNumberInput"] input,
-div[data-testid="stTextInput"] input,
-div[data-testid="stTextArea"] textarea {
-
-    color:
-        #ffffff !important;
-
-    -webkit-text-fill-color:
-        #ffffff !important;
-
-    background:
-        transparent !important;
-
-    background-color:
-        transparent !important;
-
-    opacity:
-        1 !important;
-
-    font-weight:
-        800 !important;
-}
-
-
-/* Placeholder */
-
-div[data-testid="stNumberInput"] input::placeholder,
-div[data-testid="stTextInput"] input::placeholder,
-div[data-testid="stTextArea"] textarea::placeholder {
-
-    color:
-        rgba(255,255,255,0.55) !important;
-
-    -webkit-text-fill-color:
-        rgba(255,255,255,0.55) !important;
-
-    opacity:
-        1 !important;
-}
-
-
-/* =========================================================
-   NUMBER +/- BUTTONS
-   ========================================================= */
-
-div[data-testid="stNumberInput"] button {
-
-    background:
-        rgba(255,255,255,0.08) !important;
-
-    background-color:
-        rgba(255,255,255,0.08) !important;
-
-    border:
-        1px solid rgba(255,255,255,0.25) !important;
-
-    color:
-        #ffffff !important;
-
-    fill:
-        #ffffff !important;
-
-    border-radius:
-        10px !important;
-}
-
-
-div[data-testid="stNumberInput"] button svg {
-
-    fill:
-        #ffffff !important;
-
-    color:
-        #ffffff !important;
-
-    stroke:
-        #ffffff !important;
-}
-
-
-/* =========================================================
-   INPUT FOCUS
-   ========================================================= */
-
-div[data-testid="stNumberInput"]
-div[data-baseweb="input"]:focus-within,
-
-div[data-testid="stTextInput"]
-div[data-baseweb="input"]:focus-within {
-
-    border-color:
-        rgba(96,165,250,0.9) !important;
-
-    box-shadow:
-        0 0 0 2px rgba(59,130,246,0.2) !important;
-}
-
-
-/* =========================================================
-   SELECT BOX
-   ========================================================= */
-
-div[data-testid="stSelectbox"]
-div[data-baseweb="select"] {
-
-    background:
-        #0d1527 !important;
-
-    background-color:
-        #0d1527 !important;
-
-    border:
-        1px solid rgba(255,255,255,0.35) !important;
-
-    border-radius:
-        14px !important;
-
-    color:
-        #ffffff !important;
-}
-
-
-div[data-testid="stSelectbox"]
-div[data-baseweb="select"] * {
-
-    color:
-        #ffffff !important;
-
-    fill:
-        #ffffff !important;
-}
-
-
-/* =========================================================
-   HELP TEXT
-   ========================================================= */
-
-div[data-testid="stNumberInput"] small,
-div[data-testid="stTextInput"] small,
-div[data-testid="stTextArea"] small {
-
-    color:
-        rgba(255,255,255,0.65) !important;
-}
-
-
-/* =========================================================
-   GLASS CARD
-   ========================================================= */
 
 .liquid-glass-card {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,0.12) 0%,
-            rgba(255,255,255,0.03) 100%
-        );
-
-    border:
-        1px solid rgba(255,255,255,0.22);
-
-    border-top:
-        1px solid rgba(255,255,255,0.4);
-
-    backdrop-filter:
-        blur(50px) saturate(210%);
-
-    -webkit-backdrop-filter:
-        blur(50px) saturate(210%);
-
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.45),
-        inset 0 1px 2px rgba(255,255,255,0.3);
-
-    border-radius:
-        20px;
-
-    padding:
-        18px;
-
-    width:
-        100% !important;
-
-    margin-bottom:
-        15px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(50px) saturate(210%);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 18px;
+    width: 100% !important;
+    margin-bottom: 15px;
 }
 
+.metric-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.metric-card-inner {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.25);
+}
+
+.metric-badge-box {
+    width: 36px; height: 36px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 8px;
+}
+
+.badge-green { background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; }
+.badge-pink { background: rgba(244, 63, 94, 0.25); border: 1px solid rgba(244, 63, 94, 0.5); color: #fb7185; }
+.badge-blue { background: rgba(59, 130, 246, 0.25); border: 1px solid rgba(59, 130, 246, 0.5); color: #60a5fa; }
+.badge-purple { background: rgba(139, 92, 246, 0.25); border: 1px solid rgba(139, 92, 246, 0.5); color: #c084fc; }
+
+.metric-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+.metric-value { font-size: 22px; font-weight: 800; color: #ffffff; margin: 2px 0 4px 0; }
+
+.stButton > button, div[data-testid="stFormSubmitButton"] > button {
+    width: 100%; border-radius: 18px; padding: 14px; font-size: 15px; font-weight: 800; color: #ffffff;
+    background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+}
+
+@media screen and (max-width: 768px) {
+    .metric-card-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
 </style>
-""",
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # ==============================================================================
 # SECTION 6: NAVIGATION HUB & CONTROLLER
 # ==============================================================================
-
 nav_options = [
     "📊 Executive Dashboard",
     "💳 Expense & Income Manager",
@@ -875,17 +508,8 @@ nav_options = [
 if "active_nav" not in st.session_state:
     st.session_state.active_nav = nav_options[0]
 
-st.markdown(
-    "<div style='font-size:10px; font-weight:800; color:#60a5fa; letter-spacing:1px; margin-bottom:6px; text-transform:uppercase;'>✨ Enterprise Navigation Hub</div>",
-    unsafe_allow_html=True
-)
-
-selected_tab = st.selectbox(
-    "Navigation Hub",
-    nav_options,
-    index=nav_options.index(st.session_state.active_nav),
-    label_visibility="collapsed"
-)
+st.markdown("<div style='font-size:10px; font-weight:800; color:#60a5fa; letter-spacing:1px; margin-bottom:6px; text-transform:uppercase;'>✨ Enterprise Navigation Hub</div>", unsafe_allow_html=True)
+selected_tab = st.selectbox("Navigation Hub", nav_options, index=nav_options.index(st.session_state.active_nav), label_visibility="collapsed")
 st.session_state.active_nav = selected_tab
 nav_choice = selected_tab
 
@@ -927,11 +551,9 @@ dbt_ratio = min((dbt_tot / (inc_tot if inc_tot > 0 else 1.0)) * 100.0, 100.0)
 
 fz_score, fz_cat, fz_rules, fz_mems = evaluate_fuzzy_health(exp_ratio, sav_ratio, dbt_ratio)
 
-
 # ==============================================================================
 # TAB 1: 📊 EXECUTIVE DASHBOARD MODULE
 # ==============================================================================
-
 if nav_choice == "📊 Executive Dashboard":
     h1, h2 = st.columns([3, 1.2])
     with h1:
@@ -952,30 +574,31 @@ if nav_choice == "📊 Executive Dashboard":
         """)
 
     st.html(f"""
-    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:20px;">
-        <div style="background:linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.2); border-top:1px solid rgba(255, 255, 255, 0.4); backdrop-filter:blur(40px) saturate(200%); border-radius:18px; padding:14px; box-shadow:0 15px 30px rgba(0,0,0,0.35);">
-            <div style="width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; background:rgba(16, 185, 129, 0.25); border:1px solid rgba(16, 185, 129, 0.5); color:#34d399;">💼</div>
-            <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase;">Monthly Income</div>
-            <div style="font-size:22px; font-weight:800; color:#ffffff; margin:2px 0 4px 0;">₹{inc_tot:,.0f}</div>
+    <div class="metric-card-grid">
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-green">💼</div>
+            <div class="metric-title">Monthly Income</div>
+            <div class="metric-value">₹{inc_tot:,.0f}</div>
         </div>
-        <div style="background:linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.2); border-top:1px solid rgba(255, 255, 255, 0.4); backdrop-filter:blur(40px) saturate(200%); border-radius:18px; padding:14px; box-shadow:0 15px 30px rgba(0,0,0,0.35);">
-            <div style="width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; background:rgba(244, 63, 94, 0.25); border:1px solid rgba(244, 63, 94, 0.5); color:#fb7185;">💳</div>
-            <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase;">Monthly Expenses</div>
-            <div style="font-size:22px; font-weight:800; color:#ffffff; margin:2px 0 4px 0;">₹{exp_tot:,.0f}</div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-pink">💳</div>
+            <div class="metric-title">Monthly Expenses</div>
+            <div class="metric-value">₹{exp_tot:,.0f}</div>
         </div>
-        <div style="background:linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.2); border-top:1px solid rgba(255, 255, 255, 0.4); backdrop-filter:blur(40px) saturate(200%); border-radius:18px; padding:14px; box-shadow:0 15px 30px rgba(0,0,0,0.35);">
-            <div style="width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; background:rgba(59, 130, 246, 0.25); border:1px solid rgba(59, 130, 246, 0.5); color:#60a5fa;">📈</div>
-            <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase;">Investments & SIPs</div>
-            <div style="font-size:22px; font-weight:800; color:#ffffff; margin:2px 0 4px 0;">₹{inv_tot:,.0f}</div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-blue">📈</div>
+            <div class="metric-title">Investments & SIPs</div>
+            <div class="metric-value">₹{inv_tot:,.0f}</div>
         </div>
-        <div style="background:linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.2); border-top:1px solid rgba(255, 255, 255, 0.4); backdrop-filter:blur(40px) saturate(200%); border-radius:18px; padding:14px; box-shadow:0 15px 30px rgba(0,0,0,0.35);">
-            <div style="width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; background:rgba(139, 92, 246, 0.25); border:1px solid rgba(139, 92, 246, 0.5); color:#c084fc;">🏛️</div>
-            <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase;">Debt Obligations</div>
-            <div style="font-size:22px; font-weight:800; color:#ffffff; margin:2px 0 4px 0;">₹{dbt_tot:,.0f}</div>
+        <div class="metric-card-inner">
+            <div class="metric-badge-box badge-purple">🏛️</div>
+            <div class="metric-title">Debt Obligations</div>
+            <div class="metric-value">₹{dbt_tot:,.0f}</div>
         </div>
     </div>
     """)
 
+    # FLICKER-FREE INPUT FORM
     with st.form("exec_financial_form"):
         st.markdown("<div style='font-size:18px; font-weight:800; color:#ffffff; margin-bottom:12px;'>📊 Enter Your Financial Details</div>", unsafe_allow_html=True)
         i1, i2, i3, i4 = st.columns(4)
@@ -992,6 +615,7 @@ if nav_choice == "📊 Executive Dashboard":
             st.session_state.debt = new_dbt
             st.success("Financial Snapshot Updated Successfully!")
 
+    # CASHFLOW GLASS BARS
     max_v = max(inc_tot, exp_tot, inv_tot, dbt_tot, 1.0)
     inc_p, exp_p, sav_p, dbt_p = (inc_tot/max_v)*100, (exp_tot/max_v)*100, (inv_tot/max_v)*100, (dbt_tot/max_v)*100
 
@@ -1000,7 +624,7 @@ if nav_choice == "📊 Executive Dashboard":
         <div style="font-size:16px; font-weight:800; margin-bottom:15px;">📊 Monthly Liquid Cashflow Analytics</div>
         
         <div style="margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+            <div style="display:flex; justify-space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
                 <span style="color:#34d399;">💼 Income</span><span>₹{inc_tot:,.2f} ({inc_p:.1f}%)</span>
             </div>
             <div style="width:100%; height:14px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
@@ -1009,7 +633,7 @@ if nav_choice == "📊 Executive Dashboard":
         </div>
 
         <div style="margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+            <div style="display:flex; justify-space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
                 <span style="color:#fb7185;">💳 Expenses</span><span>₹{exp_tot:,.2f} ({exp_p:.1f}%)</span>
             </div>
             <div style="width:100%; height:14px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
@@ -1018,7 +642,7 @@ if nav_choice == "📊 Executive Dashboard":
         </div>
 
         <div style="margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+            <div style="display:flex; justify-space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
                 <span style="color:#60a5fa;">📈 Investments</span><span>₹{inv_tot:,.2f} ({sav_p:.1f}%)</span>
             </div>
             <div style="width:100%; height:14px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
@@ -1027,7 +651,7 @@ if nav_choice == "📊 Executive Dashboard":
         </div>
 
         <div>
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+            <div style="display:flex; justify-space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
                 <span style="color:#c084fc;">🏛️ Debt Obligations</span><span>₹{dbt_tot:,.2f} ({dbt_p:.1f}%)</span>
             </div>
             <div style="width:100%; height:14px; background:rgba(255,255,255,0.06); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
@@ -1037,11 +661,9 @@ if nav_choice == "📊 Executive Dashboard":
     </div>
     """)
 
-
 # ==============================================================================
 # TAB 2: 💳 EXPENSE & INCOME MANAGER MODULE
 # ==============================================================================
-
 elif nav_choice == "💳 Expense & Income Manager":
     st.html('<div class="liquid-glass-card"><h2>💳 Transaction & Cashflow Ledger</h2><p style="color:rgba(255,255,255,0.7);">Record transactions to update metrics real-time.</p></div>')
     
@@ -1060,11 +682,9 @@ elif nav_choice == "💳 Expense & Income Manager":
     st.markdown("<br>", unsafe_allow_html=True)
     st.dataframe(st.session_state.transactions, use_container_width=True)
 
-
 # ==============================================================================
 # TAB 3: 🧠 MAMDANI FUZZY ANALYTICS MODULE
 # ==============================================================================
-
 elif nav_choice == "🧠 Mamdani Fuzzy Analytics":
     st.html('<div class="liquid-glass-card"><h2>🧠 Mamdani Fuzzy Inference Engine Diagnostics</h2><p style="color:rgba(255,255,255,0.7);">Membership degree ($\mu$) evaluation across sub-ratios.</p></div>')
 
@@ -1073,11 +693,9 @@ elif nav_choice == "🧠 Mamdani Fuzzy Analytics":
     with fc2: st.html(f'<div class="liquid-glass-card"><h4>Savings Ratio ({sav_ratio:.1f}%)</h4><p>• Poor: <b>{fz_mems["sav"]["Poor"]:.2f}</b></p><p>• Moderate: <b>{fz_mems["sav"]["Mod"]:.2f}</b></p><p>• Good: <b>{fz_mems["sav"]["Good"]:.2f}</b></p></div>')
     with fc3: st.html(f'<div class="liquid-glass-card"><h4>Debt Ratio ({dbt_ratio:.1f}%)</h4><p>• Low: <b>{fz_mems["dbt"]["Low"]:.2f}</b></p><p>• Medium: <b>{fz_mems["dbt"]["Med"]:.2f}</b></p><p>• High: <b>{fz_mems["dbt"]["High"]:.2f}</b></p></div>')
 
-
 # ==============================================================================
 # TAB 4: 🔮 WEALTH PREDICTIONS & SIP MODULE
 # ==============================================================================
-
 elif nav_choice == "🔮 Wealth Predictions & SIP":
     st.html('<div class="liquid-glass-card"><h2>🔮 Wealth Growth & Compound Investment Simulator</h2></div>')
 
@@ -1130,11 +748,9 @@ elif nav_choice == "🔮 Wealth Predictions & SIP":
     """)
     st.success(f"🎯 **Projected Portfolio Value after {years} Years:** ₹{max_corpus:,.2f}")
 
-
 # ==============================================================================
 # TAB 5: ✨ AI COPILOT ADVISOR MODULE
 # ==============================================================================
-
 elif nav_choice == "✨ AI Copilot Advisor":
     st.html('<div class="liquid-glass-card"><h2>✨ FinWise Conversational AI Copilot</h2></div>')
 
@@ -1147,22 +763,18 @@ elif nav_choice == "✨ AI Copilot Advisor":
     for chat in reversed(st.session_state.chat_history):
         st.html(f'<div class="liquid-glass-card" style="border-left:4px solid #3b82f6;"><b>Q: {chat["q"]}</b><hr style="border-color:rgba(255,255,255,0.1); margin:8px 0;"><div>{chat["a"]}</div></div>')
 
-
 # ==============================================================================
 # TAB 6: 📜 TRANSACTION AUDIT LOG MODULE
 # ==============================================================================
-
 elif nav_choice == "📜 Transaction Audit Log":
     st.html('<div class="liquid-glass-card"><h2>📜 Transaction Audit Trail & Exporter</h2></div>')
     st.dataframe(st.session_state.transactions, use_container_width=True)
     csv = st.session_state.transactions.to_csv(index=False).encode("utf-8")
     st.download_button("📥 Export Audit Ledger CSV", data=csv, file_name="Ledger.csv", mime="text/csv")
 
-
 # ==============================================================================
 # SECTION 7: ⚙️ SETTINGS & PROFILE MODULE
 # ==============================================================================
-
 elif nav_choice == "⚙️ Settings & Profile":
     st.html('<div class="liquid-glass-card"><h2>⚙️ Account Profile & Target Goals</h2></div>')
     st.text_input("Name:", value=AUTHOR_NAME)
@@ -1170,9 +782,7 @@ elif nav_choice == "⚙️ Settings & Profile":
     st.dataframe(st.session_state.financial_goals, use_container_width=True)
     st.info(f"LangChain Gemini LLM Status: {'Connected ✅' if os.getenv('GOOGLE_API_KEY') else 'Missing API Key ⚠️'}")
 
-
 # ==============================================================================
 # SECTION 8: APPLICATION FOOTER
 # ==============================================================================
-
 st.html(f'<div style="text-align:center; padding:20px 0; font-size:11px; color:rgba(255,255,255,0.5);">{APP_NAME} Suite v{APP_VERSION} | Powered by Streamlit, Mamdani Engine & LangChain AI</div>')
