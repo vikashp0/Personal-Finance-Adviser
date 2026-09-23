@@ -382,25 +382,25 @@ div[data-testid="stForm"] {
 }
 
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 14px !important;
-    color: #ffffff !important;
+    color: #0f172a !important;
     backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
 }
 
 .stNumberInput button {
-    background: rgba(255, 255, 255, 0.12) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #0f172a !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: #ffffff !important;
+    color: #0f172a !important;
     background: transparent !important;
-    font-weight: 700 !important;
+    font-weight: 800 !important;
 }
 
 div[data-testid="stDataFrame"], div[data-testid="stTable"] {
