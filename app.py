@@ -338,7 +338,7 @@ Provide a structured, executive financial advisory report with clear, actionable
         return f"**Mamdani Evaluation Score:** {score}/100 ({cat}). Focus on reducing high-interest debt and boosting systematic SIP investments. Error: {str(e)}"
 
 # ==============================================================================
-# SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE
+# SECTION 5: ULTRA RESPONSIVE iOS LIQUID GLASS CSS ENGINE (WITH FIXED GLASS INPUTS)
 # ==============================================================================
 st.markdown("""
 <style>
@@ -381,24 +381,27 @@ div[data-testid="stForm"] {
     width: 100% !important;
 }
 
+/* LIQUID GLASS INPUT FIELDS & SELECTORS */
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
     border-radius: 14px !important;
-    color: #0f172a !important;
-    backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(30px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
 }
 
 .stNumberInput button {
     background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    color: #0f172a !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
     background: transparent !important;
     font-weight: 800 !important;
 }
