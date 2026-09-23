@@ -381,25 +381,26 @@ div[data-testid="stForm"] {
     width: 100% !important;
 }
 
-/* HIGH-CONTRAST LOCKED INPUT STYLING (WHITE TEXT ON DARK GLASS BACKGROUND) */
+/* LIQUID GLASS THEME-LOCKED INPUT FIELDS (GUARANTEED VISIBILITY IN BOTH LIGHT/DARK MODES) */
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(15, 23, 42, 0.85) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: rgba(10, 17, 40, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
     border-radius: 14px !important;
     color: #ffffff !important;
     backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }
 
 .stNumberInput button {
     background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
     color: #ffffff !important;
     border-radius: 10px !important;
 }
 
 .stNumberInput input, .stTextInput input, .stTextArea textarea {
     color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
     background: transparent !important;
     font-weight: 800 !important;
 }
