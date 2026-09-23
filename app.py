@@ -381,25 +381,30 @@ div[data-testid="stForm"] {
     width: 100% !important;
 }
 
-/* ABSOLUTE CONTRAST OVERRIDE FOR ALL STREAMLIT INPUT FIELDS ACROSS ALL THEMES */
-div[data-baseweb="input"], div[data-baseweb="base-input"], .stNumberInput input, .stTextInput input, .stTextArea textarea {
-    background-color: rgba(10, 15, 35, 0.95) !important;
+/* BULLETPROOF INPUT VISIBILITY FIX FOR ALL THEMES */
+div[data-baseweb="input"], div[data-baseweb="base-input"] {
+    background-color: #0d1527 !important;
+    border-radius: 14px !important;
+}
+
+.stNumberInput input, .stTextInput input, .stTextArea textarea {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
+    background-color: transparent !important;
+    font-weight: 800 !important;
 }
 
 .stNumberInput div[data-baseweb="input"], .stTextInput div[data-baseweb="input"], .stTextArea div[data-baseweb="textarea"], .stSelectbox div[data-baseweb="select"] {
-    background: rgba(10, 15, 35, 0.95) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    background: #0d1527 !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
     border-radius: 14px !important;
     color: #ffffff !important;
     backdrop-filter: blur(30px) !important;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .stNumberInput button {
     background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
     color: #ffffff !important;
     border-radius: 10px !important;
 }
